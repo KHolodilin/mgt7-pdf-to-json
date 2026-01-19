@@ -55,9 +55,10 @@ class Pipeline:
         # Generate request_id for this run
         request_id = str(uuid.uuid4())
         pdf_name = Path(pdf_path).name
-        
+
         # Set request_id in context for all components
         from mgt7_pdf_to_json.logging_ import set_request_id
+
         set_request_id(request_id)
 
         log_with_request_id(
@@ -170,7 +171,9 @@ class Pipeline:
             logger.debug(f"Using mapper: {self.config.pipeline.mapper}")
             output = mapper.map(parsed_doc, request_id, pdf_name)
             output_size = len(str(output))
-            logger.debug(f"Output generated: {output_size} characters (approx {output_size / 1024:.2f} KB)")
+            logger.debug(
+                f"Output generated: {output_size} characters (approx {output_size / 1024:.2f} KB)"
+            )
 
             duration_ms = (time.time() - step_start) * 1000
             log_with_request_id(
@@ -200,9 +203,13 @@ class Pipeline:
             output["errors"] = errors
 
             if warnings:
-                logger.debug(f"Validation warnings ({len(warnings)}): {[w.get('code', 'unknown') for w in warnings]}")
+                logger.debug(
+                    f"Validation warnings ({len(warnings)}): {[w.get('code', 'unknown') for w in warnings]}"
+                )
             if errors:
-                logger.debug(f"Validation errors ({len(errors)}): {[e.get('code', 'unknown') for e in errors]}")
+                logger.debug(
+                    f"Validation errors ({len(errors)}): {[e.get('code', 'unknown') for e in errors]}"
+                )
 
             duration_ms = (time.time() - step_start) * 1000
             log_with_request_id(

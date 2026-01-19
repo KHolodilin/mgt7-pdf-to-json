@@ -88,7 +88,9 @@ class PdfPlumberExtractor:
                         "This may be a scanned/image-only PDF. OCR is required."
                     )
                     logger.error(error_msg)
-                    logger.debug(f"Pages processed: {len(pages_text)}, Tables found: {len(pages_tables)}")
+                    logger.debug(
+                        f"Pages processed: {len(pages_text)}, Tables found: {len(pages_tables)}"
+                    )
                     from mgt7_pdf_to_json.exceptions import UnsupportedFormatError
 
                     raise UnsupportedFormatError(error_msg)

@@ -27,7 +27,7 @@ class StructuredFormatter(logging.Formatter):
         """Format log record as JSON."""
         # Try to get request_id from record, fallback to context
         request_id = getattr(record, "request_id", None) or get_request_id()
-        
+
         log_data = {
             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
             "level": record.levelname,
@@ -214,7 +214,7 @@ def log_with_request_id(
     """
     # Update context with request_id
     set_request_id(request_id)
-    
+
     extra = {
         "request_id": str(request_id),
         "pdf_path": pdf_path,

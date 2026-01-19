@@ -66,3 +66,4 @@ output/
 *.json
 !examples/*.pdf
 !examples/*.json
+/examples/*.json

@@ -330,7 +330,9 @@ class TableParser:
 
         if result:
             total_parsed = sum(len(rows) for rows in result.values())
-            logger.debug(f"Table parsing complete: {total_parsed} total row(s) across {len(result)} table type(s)")
+            logger.debug(
+                f"Table parsing complete: {total_parsed} total row(s) across {len(result)} table type(s)"
+            )
 
         return result
 

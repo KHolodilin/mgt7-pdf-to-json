@@ -27,7 +27,11 @@ class DocumentNormalizer:
         # Clean text
         normalized_text = self._clean_text(raw_doc.text)
         normalized_length = len(normalized_text)
-        reduction_pct = ((original_length - normalized_length) / original_length * 100) if original_length > 0 else 0
+        reduction_pct = (
+            ((original_length - normalized_length) / original_length * 100)
+            if original_length > 0
+            else 0
+        )
         logger.debug(
             f"Text normalization complete: {normalized_length} characters output "
             f"({reduction_pct:.1f}% reduction)"
