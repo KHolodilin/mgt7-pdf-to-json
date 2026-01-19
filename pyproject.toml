@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Vladislav Kholodilin"}
+    {name = "Valerii Kholodilin"}
 ]
 keywords = ["pdf", "mgt7", "mgt7a", "json", "parser", "india", "mca"]
 classifiers = [
