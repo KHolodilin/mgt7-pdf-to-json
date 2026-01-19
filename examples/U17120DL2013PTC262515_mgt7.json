@@ -1,0 +1,956 @@
+{
+  "meta": {
+    "request_id": "437f256b-3161-4a2f-9164-0bd4fc8405f5",
+    "schema_version": "1.0",
+    "form_type": "MGT-7",
+    "financial_year": {
+      "from": "01/04/2024",
+      "to": "31/03/2025"
+    },
+    "source": {
+      "input_file": "U17120DL2013PTC262515_mgt7.pdf"
+    }
+  },
+  "data": {
+    "company": {
+      "cin": "U17120DL2013PTC262515",
+      "name": "TEGAN TEXOFAB PRIVATE LIMITED TEGAN TEXOFAB PRIVATE LIMITED"
+    },
+    "turnover_and_net_worth": {
+      "turnover_inr": 891,
+      "net_worth_inr": 266
+    },
+    "unknown": [
+      {
+        "Particulars": "Name of the company",
+        "As on filing date": "TEGAN TEXOFAB PRIVATE LIMITED",
+        "As on the financial year end date": "TEGAN TEXOFAB PRIVATE LIMITED"
+      },
+      {
+        "Particulars": "Registered office address",
+        "As on filing date": "907, R G Trade Tower, B-7, Netaji Subhash\nPlace, Pitampura,,NA,Delhi,North\nWest,Delhi,India,110034",
+        "As on the financial year end date": "907, R G Trade Tower, B-7, Netaji Subhash\nPlace, Pitampura,,NA,Delhi,North\nWest,Delhi,India,110034"
+      },
+      {
+        "Particulars": "Latitude details",
+        "As on filing date": 28.6916,
+        "As on the financial year end date": 28.6916
+      },
+      {
+        "Particulars": "Longitude details",
+        "As on filing date": 77.1513,
+        "As on the financial year end date": 77.1513
+      },
+      {
+        "S. No.": "",
+        "Stock Exchange Name": "",
+        "Code": ""
+      },
+      {
+        "CIN of the Registrar and\nTransfer Agent": "",
+        "Name of the Registrar and\nTransfer Agent": "",
+        "Registered office address of\nthe Registrar and Transfer\nAgents": "",
+        "SEBI registration number\nof Registrar and Transfer\nAgent": ""
+      },
+      {
+        "S.\nNo.": 1,
+        "Main Activity\ngroup code": "C",
+        "Description of Main\nActivity group": "Manufacturing",
+        "Business Activity\nCode": 13,
+        "Description of\nBusiness Activity": "Manufacture of\nTextiles",
+        "% of turnover of\nthe company": 100
+      },
+      {
+        "Classes of non-convertible debentures": "",
+        "Number of units": "",
+        "Nominal value\nper unit": "",
+        "Total value\n(Outstanding at the\nend of the year)": ""
+      },
+      {
+        "Classes of non-convertible debentures": "Total",
+        "Number of units": "",
+        "Nominal value\nper unit": "",
+        "Total value\n(Outstanding at the\nend of the year)": ""
+      },
+      {
+        "Classes of non-convertible debentures": "",
+        "Outstanding as at\nthe beginning of\nthe year": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding\nas at the end\nof the year": ""
+      },
+      {
+        "Classes of non-convertible debentures": "Total",
+        "Outstanding as at\nthe beginning of\nthe year": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding\nas at the end\nof the year": ""
+      },
+      {
+        "Classes of partly convertible debentures": "",
+        "Number of units": "",
+        "Nominal value\nper unit": "",
+        "Total value\n(Outstanding at the\nend of the year)": ""
+      },
+      {
+        "Classes of partly convertible debentures": "Total",
+        "Number of units": "",
+        "Nominal value\nper unit": "",
+        "Total value\n(Outstanding at the\nend of the year)": ""
+      },
+      {
+        "Classes of partly convertible debentures": "",
+        "Outstanding as at\nthe beginning of\nthe year": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding\nas at the end\nof the year": ""
+      },
+      {
+        "Classes of partly convertible debentures": "Total",
+        "Outstanding as at\nthe beginning of\nthe year": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding\nas at the end\nof the year": ""
+      },
+      {
+        "Classes of fully convertible debentures": "",
+        "Number of units": "",
+        "Nominal value\nper unit": "",
+        "Total value\n(Outstanding at the\nend of the year)": ""
+      },
+      {
+        "Classes of fully convertible debentures": "Total",
+        "Number of units": "",
+        "Nominal value\nper unit": "",
+        "Total value\n(Outstanding at the\nend of the year)": ""
+      },
+      {
+        "Classes of fully convertible debentures": "",
+        "Outstanding as at\nthe beginning of\nthe year": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding\nas at the end\nof the year": ""
+      },
+      {
+        "Classes of fully convertible debentures": "Total",
+        "Outstanding as at\nthe beginning of\nthe year": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding\nas at the end\nof the year": ""
+      },
+      {
+        "Particulars": "Non-convertible debentures",
+        "Outstanding as at\nthe beginning of the\nyear": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding as at\nthe end of the year": ""
+      },
+      {
+        "Particulars": "Partly convertible debentures",
+        "Outstanding as at\nthe beginning of the\nyear": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding as at\nthe end of the year": ""
+      },
+      {
+        "Particulars": "Fully convertible debentures",
+        "Outstanding as at\nthe beginning of the\nyear": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding as at\nthe end of the year": ""
+      },
+      {
+        "Particulars": "Total",
+        "Outstanding as at\nthe beginning of the\nyear": "",
+        "Increase during\nthe year": "",
+        "Decrease\nduring the year": "",
+        "Outstanding as at\nthe end of the year": ""
+      },
+      {
+        "Type of\nSecurities": "",
+        "Number of\nSecurities": "",
+        "Nominal Value of\neach Unit": "",
+        "Total Nominal\nValue": "",
+        "Paid up Value\nof each Unit": "",
+        "Total Paid up\nValue": ""
+      },
+      {
+        "Type of\nSecurities": "Total",
+        "Number of\nSecurities": 0.0,
+        "Nominal Value of\neach Unit": "",
+        "Total Nominal\nValue": 0.0,
+        "Paid up Value\nof each Unit": "",
+        "Total Paid up\nValue": 0.0
+      },
+      {
+        "10": "",
+        "Others": "Total",
+        "0": 0.0,
+        "0.00": 0.0
+      },
+      {
+        "10": "",
+        "Others": "Total",
+        "0": 0.0,
+        "0.00": 0.0
+      },
+      {
+        "Sl.No": 1,
+        "Category": "Individual - Female"
+      },
+      {
+        "Sl.No": 2,
+        "Category": "Individual - Male"
+      },
+      {
+        "Sl.No": 3,
+        "Category": "Individual - Transgender"
+      },
+      {
+        "Sl.No": 4,
+        "Category": "Other than individuals"
+      },
+      {
+        "Sl.No": "",
+        "Category": "Total"
+      },
+      {
+        "Details": "Promoters",
+        "At the beginning of the year": 4,
+        "At the end of the year": 4
+      },
+      {
+        "Details": "Members (other than promoters)",
+        "At the beginning of the year": 39,
+        "At the end of the year": 39
+      },
+      {
+        "Details": "Debenture holders",
+        "At the beginning of the year": 0,
+        "At the end of the year": 0
+      },
+      {
+        "Name": "",
+        "DIN/PAN": "",
+        "Designation at the\nbeginning / during the\nfinancial year": "",
+        "Date of appointment/\nchange in designation/\ncessation\n(DD/MM/YYYY)": "",
+        "Nature of change\n(Appointment/ Change in\ndesignation/ Cessation)": ""
+      },
+      {
+        "6": 7,
+        "27/09/2024": "08/10/2024",
+        "4": 4,
+        "100.00": 100.0
+      },
+      {
+        "6": 8,
+        "27/09/2024": "23/11/2024",
+        "4": 4,
+        "100.00": 100.0
+      },
+      {
+        "6": 9,
+        "27/09/2024": "26/12/2024",
+        "4": 4,
+        "100.00": 100.0
+      },
+      {
+        "6": 10,
+        "27/09/2024": "20/01/2025",
+        "4": 4,
+        "100.00": 100.0
+      },
+      {
+        "6": 11,
+        "27/09/2024": "17/03/2025",
+        "4": 4,
+        "100.00": 100.0
+      }
+    ],
+    "share_capital": [
+      {
+        "S.\nNo.": "",
+        "CIN /FCRN": "",
+        "Other registration\nnumber": "",
+        "Name of the\ncompany": "",
+        "Holding/\nSubsidiary/Associate/Jo\nint Venture": "",
+        "% of\nshares\nheld": ""
+      },
+      {
+        "Particulars": "Total number of equity shares",
+        "Authorised Capital": 10000000,
+        "Issued capital": 10000000,
+        "Subscribed capital": 10000000,
+        "Paid Up capital": 10000000
+      },
+      {
+        "Particulars": "Total amount of equity\nshares (in rupees)",
+        "Authorised Capital": 100000000.0,
+        "Issued capital": 100000000.0,
+        "Subscribed capital": 100000000.0,
+        "Paid Up capital": 100000000.0
+      },
+      {
+        "Class of shares\nEquity shares": "Number of equity shares",
+        "Authorised Capital": 10000000,
+        "Issued capital": 10000000,
+        "Subscribed Capital": 10000000,
+        "Paid Up capital": 10000000
+      },
+      {
+        "Class of shares\nEquity shares": "Nominal value per share (in rupees)",
+        "Authorised Capital": 10,
+        "Issued capital": 10,
+        "Subscribed Capital": 10,
+        "Paid Up capital": 10
+      },
+      {
+        "Class of shares\nEquity shares": "Total amount of equity shares (in\nrupees )",
+        "Authorised Capital": 100000000.0,
+        "Issued capital": 100000000.0,
+        "Subscribed Capital": 100000000,
+        "Paid Up capital": 100000000
+      },
+      {
+        "Particulars": "Total number of preference\nshares",
+        "Authorised Capital": "",
+        "Issued capital": "",
+        "Subscribed capital": "",
+        "Paid Up capital": ""
+      },
+      {
+        "Particulars": "Total amount of preference\nshares (in rupees)",
+        "Authorised Capital": "",
+        "Issued capital": "",
+        "Subscribed capital": "",
+        "Paid Up capital": ""
+      },
+      {
+        "Class of shares": "Number of preference shares",
+        "Authorised Capital": "",
+        "Issued capital": "",
+        "Subscribed Capital": "",
+        "Paid Up capital": ""
+      },
+      {
+        "Class of shares": "Nominal value per share (in rupees)",
+        "Authorised Capital": "",
+        "Issued capital": "",
+        "Subscribed Capital": "",
+        "Paid Up capital": ""
+      },
+      {
+        "Class of shares": "Total amount of preference shares (in\nrupees )",
+        "Authorised Capital": "",
+        "Issued capital": "",
+        "Subscribed Capital": "",
+        "Paid Up capital": ""
+      },
+      {
+        "Particulars": "Total amount of unclassified shares",
+        "Authorised Capital": 100000000
+      },
+      {
+        "Particulars": null,
+        "Number of shares": "Physical",
+        "Total Nominal\nAmount": null,
+        "Total Paid-up\namount": null,
+        "Total\npremium": null
+      },
+      {
+        "Particulars": "(i) Equity shares",
+        "Number of shares": "",
+        "Total Nominal\nAmount": "",
+        "Total Paid-up\namount": "",
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "At the beginning of the year",
+        "Number of shares": 539500,
+        "Total Nominal\nAmount": 100000000,
+        "Total Paid-up\namount": 100000000,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "Increase during the year",
+        "Number of shares": 0.0,
+        "Total Nominal\nAmount": 0.0,
+        "Total Paid-up\namount": 0.0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "i Public Issues",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "ii Rights issue",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iii Bonus issue",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iv Private Placement/ Preferential\nallotment",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "v ESOPs",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "vi Sweat equity shares allotted",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "vii Conversion of Preference share",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "viii Conversion of Debentures",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "ix GDRs/ADRs",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "x Others, specify",
+        "Number of shares": "",
+        "Total Nominal\nAmount": "",
+        "Total Paid-up\namount": "",
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "Decrease during the year",
+        "Number of shares": 0.0,
+        "Total Nominal\nAmount": 0.0,
+        "Total Paid-up\namount": 0.0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "i Buy-back of shares",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "ii Shares forfeited",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iii Reduction of share capital",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iv Others, specify",
+        "Number of shares": "",
+        "Total Nominal\nAmount": "",
+        "Total Paid-up\namount": "",
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "At the end of the year",
+        "Number of shares": 539500.0,
+        "Total Nominal\nAmount": 100000000.0,
+        "Total Paid-up\namount": 100000000.0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "(ii) Preference shares",
+        "Number of shares": "",
+        "Total Nominal\nAmount": "",
+        "Total Paid-up\namount": "",
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "At the beginning of the year",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "Increase during the year",
+        "Number of shares": 0.0,
+        "Total Nominal\nAmount": 0.0,
+        "Total Paid-up\namount": 0.0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "i Issues of shares",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "ii Re-issue of forfeited shares",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iii Others, specify",
+        "Number of shares": "",
+        "Total Nominal\nAmount": "",
+        "Total Paid-up\namount": "",
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "Decrease during the year",
+        "Number of shares": 0.0,
+        "Total Nominal\nAmount": 0.0,
+        "Total Paid-up\namount": 0.0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "i Redemption of shares",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "ii Shares forfeited",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iii Reduction of share capital",
+        "Number of shares": 0,
+        "Total Nominal\nAmount": 0,
+        "Total Paid-up\namount": 0,
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "iv Others, specify",
+        "Number of shares": "",
+        "Total Nominal\nAmount": "",
+        "Total Paid-up\namount": "",
+        "Total\npremium": ""
+      },
+      {
+        "Particulars": "At the end of the year",
+        "Number of shares": 0.0,
+        "Total Nominal\nAmount": 0.0,
+        "Total Paid-up\namount": 0.0,
+        "Total\npremium": ""
+      },
+      {
+        "Class of shares": "Before split / Consolidation"
+      },
+      {
+        "Class of shares": null
+      },
+      {
+        "Class of shares": "After split / consolidation"
+      },
+      {
+        "Class of shares": null
+      },
+      {
+        "S.\nNo": null,
+        "Category": null,
+        "Equity": "Number of shares",
+        "Preference": "Number of shares"
+      },
+      {
+        "S.\nNo": 1,
+        "Category": "Individual/Hindu\nUndivided Family",
+        "Equity": "",
+        "Preference": ""
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(i) Indian",
+        "Equity": 5231200,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(ii) Non-resident\nIndian (NRI)",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(iii) Foreign national\n(other than NRI)",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 2,
+        "Category": "Government",
+        "Equity": "",
+        "Preference": ""
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(i) Central\nGovernment",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(ii) State Government",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(iii) Government\ncompanies",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 3,
+        "Category": "Insurance companies",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 4,
+        "Category": "Banks",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 5,
+        "Category": "Financial institutions",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 6,
+        "Category": "Foreign institutional\ninvestors",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 7,
+        "Category": "Mutual funds",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 8,
+        "Category": "Venture capital",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 9,
+        "Category": "Body corporate\n(not mentioned above)",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": null,
+        "Category": null,
+        "Equity": "Number of shares",
+        "Preference": "Number of shares"
+      },
+      {
+        "S.\nNo": 1,
+        "Category": "Individual/Hindu\nUndivided Family",
+        "Equity": "",
+        "Preference": ""
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(i) Indian",
+        "Equity": 4768800,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(ii) Non-resident\nIndian (NRI)",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(iii) Foreign national\n(other than NRI)",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 2,
+        "Category": "Government",
+        "Equity": "",
+        "Preference": ""
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(i) Central\nGovernment",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(ii) State Government",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": "",
+        "Category": "(iii) Government\ncompanies",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 3,
+        "Category": "Insurance companies",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 4,
+        "Category": "Banks",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 5,
+        "Category": "Financial institutions",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 6,
+        "Category": "Foreign institutional\ninvestors",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 7,
+        "Category": "Mutual funds",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 8,
+        "Category": "Venture capital",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "S.\nNo": 9,
+        "Category": "Body corporate\n(not mentioned above)",
+        "Equity": 0,
+        "Preference": 0
+      },
+      {
+        "Name of the\nFII": "",
+        "Address": "",
+        "Date of Incorporation": "",
+        "Country of\nIncorporation": "",
+        "Number of\nshares held": "",
+        "% of shares\nheld": ""
+      },
+      {
+        "Name": "MANISHKUMAR\nBRIJLAL DUDHANI",
+        "DIN/PAN": 473770,
+        "Designation": "Director",
+        "Number of equity\nshares held": 1485000,
+        "Date of cessation (after\nclosure of financial year :\nIf any) (DD/MM/YYYY)": ""
+      },
+      {
+        "Name": "SANJEEV KUMAR\nMUNDHRA",
+        "DIN/PAN": 6788314,
+        "Designation": "Director",
+        "Number of equity\nshares held": 1640700,
+        "Date of cessation (after\nclosure of financial year :\nIf any) (DD/MM/YYYY)": ""
+      },
+      {
+        "Name": "ROHIT SETH",
+        "DIN/PAN": 6901097,
+        "Designation": "Director",
+        "Number of equity\nshares held": 1388000,
+        "Date of cessation (after\nclosure of financial year :\nIf any) (DD/MM/YYYY)": ""
+      },
+      {
+        "Name": "NARENDRA KOTHARI",
+        "DIN/PAN": 43742,
+        "Designation": "Director",
+        "Number of equity\nshares held": 717500,
+        "Date of cessation (after\nclosure of financial year :\nIf any) (DD/MM/YYYY)": ""
+      },
+      {
+        "Name": "SONAL SETH",
+        "DIN/PAN": "ARNPG0123E",
+        "Designation": "Company Secretary",
+        "Number of equity\nshares held": 0,
+        "Date of cessation (after\nclosure of financial year :\nIf any) (DD/MM/YYYY)": "30/06/2025"
+      },
+      {
+        "S.\nNo.": "",
+        "Name": "",
+        "Designation": "",
+        "Gross salary": "",
+        "Commission": "",
+        "Stock Option/\nSweat equity": "",
+        "Others": "",
+        "Total\namount": ""
+      },
+      {
+        "S.\nNo.": "",
+        "Name": "Total",
+        "Designation": "",
+        "Gross salary": "",
+        "Commission": "",
+        "Stock Option/\nSweat equity": "",
+        "Others": "",
+        "Total\namount": ""
+      },
+      {
+        "S.\nNo.": 1,
+        "Name": "SONAL SETH",
+        "Designation": "Company\nSecretary",
+        "Gross salary": 698295,
+        "Commission": 0,
+        "Stock Option/\nSweat equity": 0,
+        "Others": 0,
+        "Total\namount": 698295.0
+      },
+      {
+        "S.\nNo.": "",
+        "Name": "Total",
+        "Designation": "",
+        "Gross salary": 698295.0,
+        "Commission": 0.0,
+        "Stock Option/\nSweat equity": 0.0,
+        "Others": 0.0,
+        "Total\namount": 698295.0
+      },
+      {
+        "S.\nNo.": 1,
+        "Name": "Manish Kumar\nDudhani",
+        "Designation": "Director",
+        "Gross salary": 4800000,
+        "Commission": 0,
+        "Stock Option/\nSweat equity": 0,
+        "Others": 0,
+        "Total\namount": 4800000.0
+      },
+      {
+        "S.\nNo.": 2,
+        "Name": "Sanjeev Kumar\nMundhra",
+        "Designation": "Director",
+        "Gross salary": 6030000,
+        "Commission": 0,
+        "Stock Option/\nSweat equity": 0,
+        "Others": 0,
+        "Total\namount": 6030000.0
+      },
+      {
+        "S.\nNo.": "",
+        "Name": "Total",
+        "Designation": "",
+        "Gross salary": 10830000.0,
+        "Commission": 0.0,
+        "Stock Option/\nSweat equity": 0.0,
+        "Others": 0.0,
+        "Total\namount": 10830000.0
+      }
+    ],
+    "board_meetings": [
+      {
+        "date": "None"
+      },
+      {
+        "date": "30/09/2024"
+      },
+      {
+        "date": "23/12/2024"
+      },
+      {
+        "date": "None",
+        "s_no": null
+      },
+      {
+        "date": "4",
+        "s_no": 1
+      },
+      {
+        "date": "4",
+        "s_no": 2
+      },
+      {
+        "date": "4",
+        "s_no": 3
+      },
+      {
+        "date": "4",
+        "s_no": 4
+      },
+      {
+        "date": "4",
+        "s_no": 5
+      },
+      {
+        "date": "None",
+        "s_no": null
+      },
+      {
+        "date": "",
+        "s_no": ""
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "MISSING_FIELD",
+      "message": "company.cin is missing",
+      "details": {
+        "field": "company.cin"
+      }
+    },
+    {
+      "code": "MISSING_FIELD",
+      "message": "company.name is missing",
+      "details": {
+        "field": "company.name"
+      }
+    }
+  ],
+  "errors": []
+}
