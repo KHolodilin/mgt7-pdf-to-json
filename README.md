@@ -11,6 +11,53 @@ Convert India MCA annual return PDF forms **MGT-7** and **MGT-7A** into structur
 
 A Python CLI tool and library for parsing India Ministry of Corporate Affairs (MCA) annual return forms and converting them to structured JSON format with comprehensive logging and validation.
 
+## Quickstart
+
+### Installation
+
+```bash
+pip install -e .
+```
+
+### Basic Usage
+
+```bash
+# Convert PDF to JSON (outputs to same directory)
+mgt7pdf2json input.pdf
+
+# Convert with custom output file
+mgt7pdf2json input.pdf -o output.json
+
+# Convert with processing statistics
+mgt7pdf2json input.pdf -o output.json --include-stats
+```
+
+### Python Library
+
+```python
+from mgt7_pdf_to_json import Pipeline, Config
+
+# Quick start with defaults
+config = Config.default()
+pipeline = Pipeline(config)
+result = pipeline.process("input.pdf", output_path="output.json")
+
+# Access results
+print(f"Form Type: {result['meta']['form_type']}")
+print(f"Company: {result['data']['company']['name']}")
+```
+
+### What You Get
+
+The tool converts PDF forms into structured JSON with:
+- **Company Information**: CIN, name, registered address
+- **Financial Data**: Turnover, net worth, financial year
+- **Meeting Records**: Board meetings, AGM details
+- **Directors Information**: Director details and changes
+- **Validation**: Warnings and errors for data quality
+
+See [Usage](#usage) section for more examples and advanced features.
+
 ## Features
 
 - ✅ **CLI Tool**: Easy-to-use command-line interface
