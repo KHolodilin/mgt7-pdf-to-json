@@ -482,19 +482,18 @@ class TestValidateInputFile:
         original_stat = Path.stat
 
         # Create a wrapper that returns mock_stat for our specific path
-        def mock_stat_method(self):
-            # Compare paths as strings (normalized) to work on all platforms
-            # Use absolute paths for reliable comparison across platforms
-            import os
+        # Store the target path as a string for reliable comparison
+        target_path_str = str(pdf_path.absolute())
 
+        def mock_stat_method(self):
+            # Compare paths as absolute strings to work on all platforms
+            # Convert both to absolute paths for reliable comparison
             try:
-                self_abs = os.path.abspath(str(self))
-                pdf_abs = os.path.abspath(str(pdf_path))
+                self_abs = str(self.absolute())
             except (OSError, RuntimeError):
-                # If abspath fails, fall back to string comparison
+                # If absolute() fails, fall back to string comparison
                 self_abs = str(self)
-                pdf_abs = str(pdf_path)
-            if self_abs == pdf_abs:
+            if self_abs == target_path_str:
                 return mock_stat
             return original_stat(self)
 
@@ -531,20 +530,19 @@ class TestValidateInputFile:
             def st_size(self):
                 raise OSError("Permission denied")
 
+        # Store the target path as a string for reliable comparison
+        target_path_str = str(pdf_path.absolute())
+
         def mock_stat_method(self):
             result = original_stat(self)
             # Only raise OSError when accessing st_size (second call in validate_input_file)
-            # Compare paths as strings (normalized) to work on all platforms
-            import os
-
+            # Compare paths as absolute strings to work on all platforms
             try:
-                self_abs = os.path.abspath(str(self))
-                pdf_abs = os.path.abspath(str(pdf_path))
+                self_abs = str(self.absolute())
             except (OSError, RuntimeError):
-                # If abspath fails, fall back to string comparison
+                # If absolute() fails, fall back to string comparison
                 self_abs = str(self)
-                pdf_abs = str(pdf_path)
-            if self_abs == pdf_abs:
+            if self_abs == target_path_str:
                 call_count["count"] += 1
                 if call_count["count"] > 1:  # After exists/is_file checks
                     return StatResult(result)
