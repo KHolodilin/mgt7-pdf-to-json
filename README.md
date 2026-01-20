@@ -8,7 +8,6 @@
 [![License](https://img.shields.io/github/license/KHolodilin/mgt7-pdf-to-json)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/KHolodilin/mgt7-pdf-to-json)](https://github.com/KHolodilin/mgt7-pdf-to-json/stargazers)
 [![Code style: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Type checking: MyPy](https://img.shields.io/badge/mypy-checked-blue.svg)](http://mypy-lang.org/)
 
 Convert India MCA annual return PDF forms **MGT-7** and **MGT-7A** into structured **JSON**.
 
