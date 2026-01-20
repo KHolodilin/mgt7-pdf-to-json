@@ -56,11 +56,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Run all tests with coverage
+      - name: Run all tests with coverage (ubuntu 3.9)
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
         run: pytest tests/ --cov=src/mgt7_pdf_to_json --cov-report=term-missing --cov-report=xml --cov-fail-under=85
 
-      - name: Run all tests (other platforms)
+      - name: Run all tests with coverage (other platforms)
         if: matrix.os != 'ubuntu-latest' || matrix.python-version != '3.9'
         run: pytest tests/ --cov=src/mgt7_pdf_to_json --cov-report=term-missing
 
