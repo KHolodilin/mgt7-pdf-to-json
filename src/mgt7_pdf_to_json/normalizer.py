@@ -9,7 +9,19 @@ logger = LoggerFactory.get_logger("normalizer")
 
 
 class DocumentNormalizer:
-    """Normalize and clean extracted document text."""
+    """Normalize and clean extracted document text.
+
+    This class handles text normalization including whitespace cleanup,
+    line break normalization, and special character removal.
+
+    Example:
+        >>> from mgt7_pdf_to_json.models import RawDocument
+        >>> normalizer = DocumentNormalizer()
+        >>> raw = RawDocument(text="  Multiple   spaces  ", pages=[], tables=[], metadata={})
+        >>> normalized = normalizer.normalize(raw)
+        >>> normalized.text
+        'Multiple spaces'
+    """
 
     def normalize(self, raw_doc: RawDocument) -> NormalizedDocument:
         """

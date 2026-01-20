@@ -11,7 +11,20 @@ logger = LoggerFactory.get_logger("validator")
 
 
 class Validator:
-    """Validate output JSON against schema and required fields."""
+    """Validate output JSON against schema and required fields.
+
+    Performs validation of the output JSON structure, checking for
+    required sections and fields. Can operate in strict or lenient mode.
+
+    Example:
+        >>> from mgt7_pdf_to_json.config import Config
+        >>> config = Config.default()
+        >>> validator = Validator(config)
+        >>> output = {"meta": {"request_id": "123", "form_type": "MGT-7"}}
+        >>> warnings, errors = validator.validate(output)
+        >>> len(errors)  # Missing required fields
+        1
+    """
 
     def __init__(self, config: Config):
         """

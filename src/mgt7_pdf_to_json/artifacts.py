@@ -18,7 +18,18 @@ logger = LoggerFactory.get_logger("artifacts")
 
 
 class ArtifactManager:
-    """Manage intermediate debug artifacts."""
+    """Manage intermediate debug artifacts.
+
+    Handles saving and cleanup of intermediate processing artifacts
+    (raw, normalized, parsed, and output JSON) for debugging purposes.
+
+    Example:
+        >>> from mgt7_pdf_to_json.config import Config
+        >>> config = Config.default()
+        >>> manager = ArtifactManager(config)
+        >>> path = manager.save_raw("req-123", raw_doc)
+        >>> deleted = manager.cleanup()
+    """
 
     def __init__(self, config: Config):
         """

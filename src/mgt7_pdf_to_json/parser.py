@@ -88,7 +88,18 @@ class SectionSplitter:
 
 
 class KeyValueParser:
-    """Parse key-value pairs from text."""
+    """Parse key-value pairs from text.
+
+    This class extracts structured data from unstructured text using regex patterns.
+    It handles common fields like CIN, company name, financial year, turnover, and net worth.
+
+    Example:
+        >>> parser = KeyValueParser()
+        >>> text = "CIN: U17120DL2013PTC262515\\nCompany Name: ABC LIMITED"
+        >>> result = parser.parse(text)
+        >>> result["CIN"]
+        'U17120DL2013PTC262515'
+    """
 
     def parse(self, text: str, patterns: list[tuple[str, str]] | None = None) -> dict[str, Any]:
         """
@@ -96,70 +107,104 @@ class KeyValueParser:
 
         Args:
             text: Text to parse
-            patterns: Optional list of (key, pattern) tuples
+            patterns: Optional list of (key, pattern) tuples. If None, uses default patterns.
 
         Returns:
             Dictionary of parsed key-value pairs
+
+        Example:
+            >>> parser = KeyValueParser()
+            >>> result = parser.parse("CIN: U17120DL2013PTC262515")
+            >>> "CIN" in result
+            True
         """
         result: dict[str, Any] = {}
         text_length = len(text)
         logger.debug(f"Parsing key-value pairs from text: {text_length} characters")
 
         if not patterns:
-            # Default patterns for common fields
-            patterns = [
-                # CIN - Corporate Identity Number (21 chars: U17120DL2013PTC262515)
-                (
-                    "CIN",
-                    r"(?:CIN|Corporate\s+Identity\s+Number)[\s:]*([A-Z][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})",
-                ),
-                # Try to find CIN in filename if present
-                ("CIN_Filename", r"([A-Z][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})"),
-                # Company Name - improved pattern to stop at first field
-                (
-                    "Company Name",
-                    r"(?:Name\s+of\s+the\s+company|Company\s+Name|Name\s+of\s+the\s+Company)[\s:]*([A-Z][A-Z\s&,\.]+(?:LIMITED|LTD|PRIVATE|PVT)[^\n]*)",
-                ),
-                # Alternative: extract from table if available
-                (
-                    "Company Name Alt",
-                    r"(?:\"As on filing date\"|As on filing date)[\s:]*\"?([A-Z][A-Z\s&,\.]+(?:LIMITED|LTD|PRIVATE|PVT))",
-                ),
-                # Financial Year - try multiple patterns
-                (
-                    "Financial Year End",
-                    r"financial\s+year\s+ended\s+on\s*\(DD/MM/YYYY\)\s*(\d{1,2}/\d{1,2}/\d{2,4})",
-                ),
-                (
-                    "Financial Year To",
-                    r"(?:Financial\s+Year\s+To|To\s+Date|closure of\s+financial\s+year)[\s:]*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                ),
-                (
-                    "Financial Year From",
-                    r"(?:Financial\s+Year\s+From|From\s+Date)[\s:]*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                ),
-                # Turnover - improved pattern to capture full number
-                (
-                    "Turnover",
-                    r"(?:\*\s*)?Turnover[\s:]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
-                ),
-                # Alternative turnover pattern
-                (
-                    "Turnover_Alt",
-                    r"i\s*\*\s*Turnover[\s\n]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
-                ),
-                # Net Worth - improved pattern to capture full number
-                (
-                    "Net Worth",
-                    r"(?:\*\s*)?Net\s+worth\s+of\s+the\s+Company[\s:]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
-                ),
-                # Alternative net worth pattern
-                (
-                    "Net Worth_Alt",
-                    r"ii\s*\*\s*Net\s+worth\s+of\s+the\s+Company[\s\n]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
-                ),
-            ]
+            patterns = self._get_default_patterns()
 
+        result = self._apply_patterns(text, patterns, result)
+        self._handle_fallbacks(result)
+        self._normalize_dates(result)
+
+        return result
+
+    def _get_default_patterns(self) -> list[tuple[str, str]]:
+        """
+        Get default regex patterns for common fields.
+
+        Returns:
+            List of (key, pattern) tuples for common MGT-7 fields
+        """
+        return [
+            # CIN - Corporate Identity Number (21 chars: U17120DL2013PTC262515)
+            (
+                "CIN",
+                r"(?:CIN|Corporate\s+Identity\s+Number)[\s:]*([A-Z][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})",
+            ),
+            # Try to find CIN in filename if present
+            ("CIN_Filename", r"([A-Z][0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6})"),
+            # Company Name - improved pattern to stop at first field
+            (
+                "Company Name",
+                r"(?:Name\s+of\s+the\s+company|Company\s+Name|Name\s+of\s+the\s+Company)[\s:]*([A-Z][A-Z\s&,\.]+(?:LIMITED|LTD|PRIVATE|PVT)[^\n]*)",
+            ),
+            # Alternative: extract from table if available
+            (
+                "Company Name Alt",
+                r"(?:\"As on filing date\"|As on filing date)[\s:]*\"?([A-Z][A-Z\s&,\.]+(?:LIMITED|LTD|PRIVATE|PVT))",
+            ),
+            # Financial Year - try multiple patterns
+            (
+                "Financial Year End",
+                r"financial\s+year\s+ended\s+on\s*\(DD/MM/YYYY\)\s*(\d{1,2}/\d{1,2}/\d{2,4})",
+            ),
+            (
+                "Financial Year To",
+                r"(?:Financial\s+Year\s+To|To\s+Date|closure of\s+financial\s+year)[\s:]*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
+            ),
+            (
+                "Financial Year From",
+                r"(?:Financial\s+Year\s+From|From\s+Date)[\s:]*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
+            ),
+            # Turnover - improved pattern to capture full number
+            (
+                "Turnover",
+                r"(?:\*\s*)?Turnover[\s:]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
+            ),
+            # Alternative turnover pattern
+            (
+                "Turnover_Alt",
+                r"i\s*\*\s*Turnover[\s\n]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
+            ),
+            # Net Worth - improved pattern to capture full number
+            (
+                "Net Worth",
+                r"(?:\*\s*)?Net\s+worth\s+of\s+the\s+Company[\s:]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
+            ),
+            # Alternative net worth pattern
+            (
+                "Net Worth_Alt",
+                r"ii\s*\*\s*Net\s+worth\s+of\s+the\s+Company[\s\n]*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)",
+            ),
+        ]
+
+    def _apply_patterns(
+        self, text: str, patterns: list[tuple[str, str]], result: dict[str, Any]
+    ) -> dict[str, Any]:
+        """
+        Apply regex patterns to extract key-value pairs from text.
+
+        Args:
+            text: Text to search
+            patterns: List of (key, pattern) tuples
+            result: Dictionary to populate with results
+
+        Returns:
+            Updated result dictionary
+        """
         for key, pattern in patterns:
             try:
                 match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
@@ -167,22 +212,7 @@ class KeyValueParser:
                     value = match.group(1).strip()
                     # Clean company name
                     if "Company Name" in key:
-                        # Remove extra text after company name
-                        value = re.split(r"\s+(?:Registered|Latitude|Page|\()", value, maxsplit=1)[
-                            0
-                        ]
-                        value = re.sub(r"\s+", " ", value).strip()
-                        # Remove duplicates (sometimes company name is repeated)
-                        words = value.split()
-                        seen = set()
-                        unique_words = []
-                        for word in words:
-                            if (
-                                word.lower() not in seen or word.upper() == word
-                            ):  # Keep uppercase words
-                                unique_words.append(word)
-                                seen.add(word.lower())
-                        value = " ".join(unique_words)
+                        value = self._clean_company_name(value)
                     # Try to convert to number if applicable
                     if "Turnover" in key or "Net Worth" in key:
                         value = self._parse_value(value)
@@ -197,7 +227,38 @@ class KeyValueParser:
                     "This field may be missing or in an unexpected format. "
                     "Continuing with other fields."
                 )
+        return result
 
+    def _clean_company_name(self, value: str) -> str:
+        """
+        Clean and normalize company name.
+
+        Args:
+            value: Raw company name string
+
+        Returns:
+            Cleaned company name
+        """
+        # Remove extra text after company name
+        value = re.split(r"\s+(?:Registered|Latitude|Page|\()", value, maxsplit=1)[0]
+        value = re.sub(r"\s+", " ", value).strip()
+        # Remove duplicates (sometimes company name is repeated)
+        words = value.split()
+        seen = set()
+        unique_words = []
+        for word in words:
+            if word.lower() not in seen or word.upper() == word:  # Keep uppercase words
+                unique_words.append(word)
+                seen.add(word.lower())
+        return " ".join(unique_words)
+
+    def _handle_fallbacks(self, result: dict[str, Any]) -> None:
+        """
+        Handle fallback patterns for fields that may have alternative matches.
+
+        Args:
+            result: Result dictionary to update
+        """
         # Handle CIN fallback - use filename pattern if main pattern failed
         if "CIN" not in result or not result["CIN"]:
             if "CIN_Filename" in result:
@@ -229,6 +290,13 @@ class KeyValueParser:
             # Use alternative if main pattern got partial match
             result["Net Worth"] = result.pop("Net Worth_Alt")
 
+    def _normalize_dates(self, result: dict[str, Any]) -> None:
+        """
+        Normalize and infer date fields.
+
+        Args:
+            result: Result dictionary to update
+        """
         # Handle financial year - infer from end date if only end date found
         if "Financial Year End" in result and "Financial Year To" not in result:
             # Normalize date format
@@ -268,8 +336,6 @@ class KeyValueParser:
                         f"Raw value: '{result[key]}'. "
                         "Date format may be invalid or unexpected."
                     )
-
-        return result
 
     def _parse_value(self, value: str) -> Any:
         """

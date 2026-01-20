@@ -13,7 +13,20 @@ logger = LoggerFactory.get_logger("extractor")
 
 
 class PdfPlumberExtractor:
-    """Extract text and tables from PDF using pdfplumber."""
+    """Extract text and tables from PDF using pdfplumber.
+
+    This class extracts both text content and tabular data from PDF files.
+    It handles multi-page documents and provides detailed error messages
+    for unsupported formats (e.g., scanned/image-only PDFs).
+
+    Example:
+        >>> extractor = PdfPlumberExtractor()
+        >>> raw_doc = extractor.extract("example.pdf")
+        >>> len(raw_doc.pages)
+        5
+        >>> len(raw_doc.tables)
+        2
+    """
 
     def extract(self, pdf_path: str | Path) -> RawDocument:
         """

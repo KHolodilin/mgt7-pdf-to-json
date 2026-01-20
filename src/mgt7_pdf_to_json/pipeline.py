@@ -22,7 +22,19 @@ logger = LoggerFactory.get_logger("pipeline")
 
 
 class Pipeline:
-    """Main pipeline for PDF to JSON conversion."""
+    """Main pipeline for PDF to JSON conversion.
+
+    Orchestrates the complete conversion process from PDF to JSON,
+    including extraction, normalization, parsing, mapping, and validation.
+
+    Example:
+        >>> from mgt7_pdf_to_json.config import Config
+        >>> config = Config.default()
+        >>> pipeline = Pipeline(config)
+        >>> result = pipeline.process("example.pdf", "output.json")
+        >>> "meta" in result
+        True
+    """
 
     def __init__(self, config: Config):
         """

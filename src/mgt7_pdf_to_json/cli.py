@@ -12,7 +12,21 @@ from mgt7_pdf_to_json.pipeline import Pipeline
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse CLI arguments."""
+    """
+    Parse command-line arguments.
+
+    Returns:
+        Parsed arguments namespace
+
+    Example:
+        >>> import sys
+        >>> sys.argv = ["mgt7pdf2json", "input.pdf", "-o", "output.json"]
+        >>> args = parse_args()
+        >>> args.input
+        'input.pdf'
+        >>> args.output
+        'output.json'
+    """
     parser = argparse.ArgumentParser(
         prog="mgt7pdf2json",
         description="Convert MGT-7 and MGT-7A PDF forms to JSON",
