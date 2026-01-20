@@ -10,12 +10,25 @@ def parse_date(date_str: str, default_format: str = "DD/MM/YYYY") -> str | None:
     """
     Parse date string and normalize to DD/MM/YYYY format.
 
+    Supports multiple input formats including DD/MM/YYYY, DD-MM-YYYY,
+    and YYYY-MM-DD (ISO). Handles 2-digit years by inferring century.
+
     Args:
         date_str: Date string to parse
         default_format: Default format hint (not used currently)
 
     Returns:
         Normalized date string in DD/MM/YYYY format or None if cannot parse
+
+    Example:
+        >>> parse_date("31/03/2023")
+        '31/03/2023'
+        >>> parse_date("31-03-2023")
+        '31/03/2023'
+        >>> parse_date("2023-03-31")
+        '31/03/2023'
+        >>> parse_date("31/03/23")
+        '31/03/2023'
     """
     if not date_str or not date_str.strip():
         return None
@@ -75,12 +88,23 @@ def format_date_for_output(date_str: str | None, use_iso: bool = False) -> str:
     """
     Format date string for output.
 
+    Converts date from DD/MM/YYYY format to either the same format
+    or ISO format (YYYY-MM-DDTHH:MM:SSZ) if requested.
+
     Args:
         date_str: Date string in DD/MM/YYYY format
         use_iso: Use ISO format if True
 
     Returns:
-        Formatted date string
+        Formatted date string (empty string if input is None)
+
+    Example:
+        >>> format_date_for_output("31/03/2023")
+        '31/03/2023'
+        >>> format_date_for_output("31/03/2023", use_iso=True)
+        '2023-03-31T00:00:00Z'
+        >>> format_date_for_output(None)
+        ''
     """
     if not date_str:
         return ""

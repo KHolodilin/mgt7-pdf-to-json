@@ -15,7 +15,19 @@ logger = LoggerFactory.get_logger("mappers")
 
 
 class BaseMapper(ABC):
-    """Base class for output mappers."""
+    """Base class for output mappers.
+
+    All mapper implementations must inherit from this class and
+    implement the `map` method to convert ParsedDocument to output JSON.
+
+    Example:
+        >>> from mgt7_pdf_to_json.models import ParsedDocument
+        >>> class CustomMapper(BaseMapper):
+        ...     def map(self, parsed, request_id, input_file):
+        ...         return {"custom": "output"}
+        >>> mapper = CustomMapper()
+        >>> result = mapper.map(parsed_doc, "req-123", "file.pdf")
+    """
 
     @abstractmethod
     def map(
