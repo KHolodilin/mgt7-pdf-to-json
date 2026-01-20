@@ -25,3 +25,14 @@ repos:
         additional_dependencies: [types-pyyaml]
         args: [--ignore-missing-imports]
         exclude: ^(tests/|examples/)
+
+  - repo: local
+    hooks:
+      - id: pytest-fast
+        name: pytest-fast
+        entry: pytest
+        language: system
+        args: ["-x", "-q", "--tb=short", "-m", "not integration and not smoke"]
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
