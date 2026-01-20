@@ -12,6 +12,10 @@
 
 ## Issue #1: Улучшение покрытия тестами
 
+**Title (EN):** Improve test coverage to 85%+
+
+**Description (EN):** Increase test coverage from current 73.14% to at least 85% by adding comprehensive tests for CLI, parser, artifacts, and date utilities modules. This will improve code reliability and maintainability.
+
 ### Ветка: `feature/issue-1-improve-test-coverage`
 
 ### Задачи:
@@ -46,6 +50,10 @@ git commit -m "test: improve test coverage to 85%+"
 
 ## Issue #2: Улучшение обработки ошибок
 
+**Title (EN):** Improve error handling and validation
+
+**Description (EN):** Enhance error messages with more context and detailed information. Add input file validation before processing to provide better user experience and faster failure detection.
+
 ### Ветка: `feature/issue-2-improve-error-handling`
 
 ### Задачи:
@@ -78,6 +86,10 @@ git commit -m "feat: improve error handling and validation"
 
 ## Issue #3: Улучшение качества кода
 
+**Title (EN):** Improve code quality and type hints
+
+**Description (EN):** Enhance code quality by adding comprehensive type hints, improving docstrings, and refactoring large functions. This will improve code readability, maintainability, and IDE support.
+
 ### Ветка: `feature/issue-3-improve-code-quality`
 
 ### Задачи:
@@ -107,6 +119,10 @@ git commit -m "refactor: improve code quality and type hints"
 ---
 
 ## Issue #4: Добавление проверок безопасности в CI/CD
+
+**Title (EN):** Add security checks to CI/CD pipeline
+
+**Description (EN):** Integrate safety and bandit tools for dependency vulnerability scanning and static security analysis. Configure Dependabot for automatic dependency updates to keep the project secure and up-to-date.
 
 ### Ветка: `feature/issue-4-add-security-checks`
 
@@ -141,6 +157,10 @@ git commit -m "ci: add security checks (safety, bandit) and dependabot"
 ---
 
 ## Issue #5: Добавление статистики обработки
+
+**Title (EN):** Add processing statistics feature
+
+**Description (EN):** Implement processing statistics collection and reporting including processing time, number of pages, extracted tables, and parsed fields. Add optional CLI flag to include statistics in output JSON and logs.
 
 ### Ветка: `feature/issue-5-add-processing-statistics`
 
@@ -186,8 +206,14 @@ git commit -m "feat: add processing statistics (time, pages, tables)"
 ## Шаблон для создания Issue в GitHub
 
 ```markdown
-## Описание
-[Описание задачи из плана]
+## Title (EN)
+[English title from plan]
+
+## Description (EN)
+[English description from plan]
+
+## Описание (RU)
+[Русское описание задачи из плана]
 
 ## Задачи
 - [ ] Задача 1
