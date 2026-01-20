@@ -22,10 +22,16 @@ def examples_dir() -> Path:
 @pytest.fixture
 def mgt7_pdf_path(examples_dir: Path) -> Path:
     """Path to MGT-7 example PDF."""
-    return examples_dir / "U17120DL2013PTC262515_mgt7.pdf"
+    path = examples_dir / "U17120DL2013PTC262515_mgt7.pdf"
+    if not path.exists():
+        pytest.skip(f"Example PDF not found: {path}")
+    return path
 
 
 @pytest.fixture
 def mgt7a_pdf_path(examples_dir: Path) -> Path:
     """Path to MGT-7A example PDF."""
-    return examples_dir / "KA903UC002704392_mgt7a.pdf"
+    path = examples_dir / "KA903UC002704392_mgt7a.pdf"
+    if not path.exists():
+        pytest.skip(f"Example PDF not found: {path}")
+    return path
