@@ -85,6 +85,55 @@ mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --strict
 
 Fails if any required fields are missing.
 
+#### Include Processing Statistics
+
+```bash
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --include-stats -o output.json
+```
+
+Includes processing statistics (time, pages, tables, parsed fields) in the output JSON.
+
+#### Output to Directory
+
+```bash
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --outdir output/
+```
+
+Creates `output/U17120DL2013PTC262515_mgt7.json`.
+
+#### Custom Logging
+
+```bash
+# Set log level
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --log-level DEBUG
+
+# Use JSON logging format
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --log-format json
+
+# Set custom log directory
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --log-dir custom_logs/
+```
+
+#### Fail on Warnings
+
+```bash
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf --fail-on-warnings
+```
+
+Exits with error code if any warnings are generated during processing.
+
+#### Complete Example
+
+```bash
+mgt7pdf2json examples/U17120DL2013PTC262515_mgt7.pdf \
+  --output result.json \
+  --mapper minimal \
+  --config config.yml \
+  --log-level INFO \
+  --strict \
+  --include-stats
+```
+
 ### Python Library
 
 ```python
@@ -116,6 +165,70 @@ config.pipeline.mapper = "minimal"
 
 pipeline = Pipeline(config)
 result = pipeline.process("input.pdf")
+```
+
+#### With Processing Statistics
+
+```python
+from mgt7_pdf_to_json import Pipeline, Config
+
+config = Config.default()
+pipeline = Pipeline(config)
+
+# Enable statistics collection
+result = pipeline.process(
+    "input.pdf",
+    output_path="output.json",
+    include_stats=True
+)
+
+# Access statistics
+if "statistics" in result.get("meta", {}):
+    stats = result["meta"]["statistics"]
+    print(f"Processing time: {stats['processing_total_duration_seconds']:.2f}s")
+    print(f"Pages: {stats['pages_count']}")
+    print(f"Tables: {stats['tables_count']}")
+    print(f"Parsed fields: {stats['parsed_fields_count']}")
+```
+
+#### Processing Without Output File
+
+```python
+from mgt7_pdf_to_json import Pipeline, Config
+
+config = Config.default()
+pipeline = Pipeline(config)
+
+# Process without saving to file (returns dict only)
+result = pipeline.process("input.pdf")
+
+# Access parsed data
+form_type = result["meta"]["form_type"]
+company_name = result["data"]["company"]["name"]
+warnings = result["warnings"]
+errors = result["errors"]
+```
+
+#### Error Handling
+
+```python
+from mgt7_pdf_to_json import Pipeline, Config
+from mgt7_pdf_to_json.exceptions import UnsupportedFormatError
+
+config = Config.default()
+pipeline = Pipeline(config)
+
+try:
+    result = pipeline.process("input.pdf", output_path="output.json")
+except FileNotFoundError:
+    print("Input file not found")
+except ValueError as e:
+    if "scanned" in str(e).lower():
+        print("PDF appears to be scanned. OCR required.")
+    else:
+        print(f"Processing error: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
 ```
 
 ## Configuration
@@ -290,6 +403,126 @@ Quick start:
 4. Run tests and linting
 5. Submit a pull request
 
+## Troubleshooting
+
+### Common Issues
+
+#### "Input file not found" Error
+
+**Problem:** The tool cannot find the specified PDF file.
+
+**Solutions:**
+- Check that the file path is correct
+- Use absolute path if relative path doesn't work
+- Ensure the file has `.pdf` extension
+- Check file permissions (must be readable)
+
+#### "Unsupported PDF format" Error
+
+**Problem:** The PDF appears to be scanned or image-only.
+
+**Solutions:**
+- The PDF may be a scanned document requiring OCR
+- Try using OCR tools to convert scanned PDFs to text-based PDFs
+- Ensure the PDF contains extractable text (not just images)
+
+#### "Validation failed" Error (in strict mode)
+
+**Problem:** Required fields are missing in the parsed output.
+
+**Solutions:**
+- Check if the PDF is a valid MGT-7 or MGT-7A form
+- Try processing without `--strict` flag to see warnings instead
+- Enable `--debug-artifacts` to inspect intermediate parsing results
+- Check the `errors` array in the output JSON for details
+
+#### Low Parsing Accuracy
+
+**Problem:** Some fields are not parsed correctly.
+
+**Solutions:**
+- Enable `--debug-artifacts` to inspect raw extracted text
+- Check the normalized text artifact to see how text was cleaned
+- Review the parsed artifact to see what was extracted
+- Some PDFs may have non-standard formatting
+
+#### Memory Issues with Large PDFs
+
+**Problem:** Processing fails or is slow with large PDF files.
+
+**Solutions:**
+- Ensure sufficient system memory
+- Process files one at a time rather than in batch
+- Consider splitting very large PDFs if possible
+
+### Getting Help
+
+1. **Check the logs:** Enable `--log-level DEBUG` for detailed information
+2. **Enable artifacts:** Use `--debug-artifacts` to inspect intermediate files
+3. **Review output:** Check the `warnings` and `errors` arrays in the JSON output
+4. **Open an issue:** Provide the error message, PDF file type, and log output
+
+## FAQ
+
+### What PDF formats are supported?
+
+Currently, the tool supports:
+- **MGT-7**: Annual Return form for companies
+- **MGT-7A**: Annual Return form for One Person Companies (OPC)
+
+The PDF must contain extractable text (not scanned images).
+
+### Can I process multiple PDFs at once?
+
+Currently, the CLI processes one PDF at a time. For batch processing, you can:
+- Use a shell script to loop through files
+- Use the Python library in a loop
+- Process files in parallel using Python's `multiprocessing`
+
+### How accurate is the parsing?
+
+Parsing accuracy depends on:
+- PDF quality and formatting
+- Text extraction quality
+- Form structure consistency
+
+The tool includes validation to identify missing or incorrect fields. Use `--strict` mode for production to ensure all required fields are present.
+
+### Can I customize the output format?
+
+Yes! You can:
+- Use different mappers: `default`, `minimal`, or `db`
+- Create custom mappers by extending `BaseMapper`
+- Process the output JSON programmatically to transform it
+
+### How do I handle warnings and errors?
+
+- **Warnings:** Indicate missing optional fields or minor parsing issues
+- **Errors:** Indicate missing required fields (in strict mode) or critical issues
+- Use `--fail-on-warnings` to treat warnings as errors
+- Check the `warnings` and `errors` arrays in the output JSON
+
+### What are artifacts?
+
+Artifacts are intermediate files saved during processing:
+- **Raw:** Extracted text and metadata from PDF
+- **Normalized:** Cleaned and normalized text
+- **Parsed:** Structured parsed data
+- **Output:** Final JSON output
+
+Enable with `--debug-artifacts` for debugging parsing issues.
+
+### How do I contribute?
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+- Development setup
+- Code style and conventions
+- Testing requirements
+- Pull request process
+
 ## Support
 
-For issues and questions, please open an issue on the GitHub repository.
+For issues and questions:
+- **GitHub Issues:** [Open an issue](https://github.com/KHolodilin/mgt7-pdf-to-json/issues)
+- **Security Issues:** [Report security vulnerability](https://github.com/KHolodilin/mgt7-pdf-to-json/security/advisories/new)
+- **Discussions:** [Start a discussion](https://github.com/KHolodilin/mgt7-pdf-to-json/discussions)
