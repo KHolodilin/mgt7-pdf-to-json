@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pdfplumber
 
+from mgt7_pdf_to_json.exceptions import ExtractionError, UnsupportedFormatError
 from mgt7_pdf_to_json.logging_ import LoggerFactory
 from mgt7_pdf_to_json.models import RawDocument
 
@@ -140,8 +141,6 @@ class PdfPlumberExtractor:
                     logger.debug(
                         f"Pages processed: {len(pages_text)}, Tables found: {len(pages_tables)}"
                     )
-                    from mgt7_pdf_to_json.exceptions import UnsupportedFormatError
-
                     raise UnsupportedFormatError(error_msg)
 
                 metadata = {
@@ -178,8 +177,6 @@ class PdfPlumberExtractor:
                     "Please verify the file integrity."
                 )
                 logger.error(error_msg, exc_info=True)
-                from mgt7_pdf_to_json.exceptions import ExtractionError
-
                 raise ExtractionError(error_msg) from e
             else:
                 error_type = type(e).__name__
@@ -189,6 +186,4 @@ class PdfPlumberExtractor:
                     "Please check if the file is a valid PDF and not corrupted."
                 )
                 logger.error(error_msg, exc_info=True)
-                from mgt7_pdf_to_json.exceptions import ExtractionError
-
                 raise ExtractionError(error_msg) from e

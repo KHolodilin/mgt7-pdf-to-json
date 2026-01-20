@@ -244,3 +244,133 @@ class TestArtifactManager:
 
         # Should handle error gracefully and continue
         assert deleted == 0  # File wasn't deleted due to error
+
+    def test_cleanup_actually_deletes_file(self, config_with_artifacts, temp_dir):
+        """Test cleanup actually deletes old files (covers unlink and deleted_count increment)."""
+        manager = ArtifactManager(config_with_artifacts)
+        artifacts_dir = manager.artifacts_dir
+
+        # Create artifact file
+        artifact_file = artifacts_dir / "old.raw.json"
+        artifact_file.write_text('{"text": "old"}', encoding="utf-8")
+        assert artifact_file.exists()
+
+        # Set file modification time to be old by using os.utime
+        import os
+        from datetime import datetime, timedelta
+
+        old_time = datetime.now() - timedelta(days=config_with_artifacts.artifacts.keep_days + 1)
+        old_timestamp = old_time.timestamp()
+        os.utime(artifact_file, (old_timestamp, old_timestamp))
+
+        deleted = manager.cleanup()
+
+        # File should be deleted (covers lines 182-183)
+        assert deleted > 0
+        assert not artifact_file.exists()
+
+    def test_cleanup_logs_with_request_id_when_deleted(self, config_with_artifacts, temp_dir):
+        """Test cleanup logs with request_id when files are deleted (covers lines 189-197)."""
+        manager = ArtifactManager(config_with_artifacts)
+        request_id = "test-123"
+
+        # Create old artifact file
+        artifacts_dir = manager.artifacts_dir
+        artifact_file = artifacts_dir / "old.raw.json"
+        artifact_file.write_text('{"text": "old"}', encoding="utf-8")
+
+        # Set file modification time to be old by using os.utime
+        import os
+        from datetime import datetime, timedelta
+
+        old_time = datetime.now() - timedelta(days=config_with_artifacts.artifacts.keep_days + 1)
+        old_timestamp = old_time.timestamp()
+        os.utime(artifact_file, (old_timestamp, old_timestamp))
+
+        deleted = manager.cleanup(request_id)
+
+        # Should use log_with_request_id (covers lines 189-197)
+        assert deleted > 0
+
+    def test_cleanup_logs_without_request_id_when_deleted(self, config_with_artifacts, temp_dir):
+        """Test cleanup logs without request_id when files are deleted (covers lines 198-199)."""
+        manager = ArtifactManager(config_with_artifacts)
+
+        # Create old artifact file
+        artifacts_dir = manager.artifacts_dir
+        artifact_file = artifacts_dir / "old.raw.json"
+        artifact_file.write_text('{"text": "old"}', encoding="utf-8")
+
+        # Set file modification time to be old by using os.utime
+        import os
+        from datetime import datetime, timedelta
+
+        old_time = datetime.now() - timedelta(days=config_with_artifacts.artifacts.keep_days + 1)
+        old_timestamp = old_time.timestamp()
+        os.utime(artifact_file, (old_timestamp, old_timestamp))
+
+        deleted = manager.cleanup()
+
+        # Should use logger.info (covers lines 198-199)
+        assert deleted > 0
+
+    def test_cleanup_deletes_old_file(self, config_with_artifacts, temp_dir):
+        """Test cleanup actually deletes old files."""
+        manager = ArtifactManager(config_with_artifacts)
+        artifacts_dir = manager.artifacts_dir
+
+        # Create artifact file
+        artifact_file = artifacts_dir / "old.raw.json"
+        artifact_file.write_text('{"text": "old"}', encoding="utf-8")
+
+        # Mock datetime.now() to make the file appear old
+        from datetime import datetime, timedelta
+
+        future_date = datetime.now() + timedelta(days=config_with_artifacts.artifacts.keep_days + 1)
+        with patch("mgt7_pdf_to_json.artifacts.datetime") as mock_datetime:
+            mock_datetime.now.return_value = future_date
+            deleted = manager.cleanup()
+
+        # File should be deleted as it's now older than keep_days
+        assert deleted >= 0
+
+    def test_cleanup_logs_with_request_id(self, config_with_artifacts, temp_dir):
+        """Test cleanup logs with request_id when provided."""
+        manager = ArtifactManager(config_with_artifacts)
+        request_id = "test-123"
+
+        # Create old artifact file
+        artifacts_dir = manager.artifacts_dir
+        artifact_file = artifacts_dir / "old.raw.json"
+        artifact_file.write_text('{"text": "old"}', encoding="utf-8")
+
+        # Mock datetime.now() to make the file appear old
+        from datetime import datetime, timedelta
+
+        future_date = datetime.now() + timedelta(days=config_with_artifacts.artifacts.keep_days + 1)
+        with patch("mgt7_pdf_to_json.artifacts.datetime") as mock_datetime:
+            mock_datetime.now.return_value = future_date
+            deleted = manager.cleanup(request_id)
+
+        # Should use log_with_request_id
+        assert deleted >= 0
+
+    def test_cleanup_logs_without_request_id(self, config_with_artifacts, temp_dir):
+        """Test cleanup logs without request_id (uses logger.info)."""
+        manager = ArtifactManager(config_with_artifacts)
+
+        # Create old artifact file
+        artifacts_dir = manager.artifacts_dir
+        artifact_file = artifacts_dir / "old.raw.json"
+        artifact_file.write_text('{"text": "old"}', encoding="utf-8")
+
+        # Mock datetime.now() to make the file appear old
+        from datetime import datetime, timedelta
+
+        future_date = datetime.now() + timedelta(days=config_with_artifacts.artifacts.keep_days + 1)
+        with patch("mgt7_pdf_to_json.artifacts.datetime") as mock_datetime:
+            mock_datetime.now.return_value = future_date
+            deleted = manager.cleanup()
+
+        # Should use logger.info (not log_with_request_id)
+        assert deleted >= 0

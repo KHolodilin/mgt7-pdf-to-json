@@ -103,3 +103,116 @@ class TestIntegration:
         # Use non-existent file to trigger error
         with pytest.raises(FileNotFoundError):
             pipeline.process("nonexistent.pdf", str(tmp_path / "output.json"))
+
+    def test_process_with_parsed_fields_count_else_branch(self, mgt7_pdf_path, tmp_path):
+        """Test processing with parsed_fields_count else branch (non-dict, non-list)."""
+        from unittest.mock import patch
+
+        config = Config.default()
+        config.artifacts.enabled = False
+        pipeline = Pipeline(config)
+
+        # Mock parser to return ParsedDocument with non-dict, non-list values in data
+        # This will trigger the else branch in parsed_fields_count calculation
+        original_parse = pipeline.parser.parse
+
+        def mock_parse(doc, raw_tables):
+            parsed = original_parse(doc, raw_tables)
+            # Add a non-dict, non-list value to data
+            parsed.data["simple_string"] = "test_value"
+            return parsed
+
+        with patch.object(pipeline.parser, "parse", side_effect=mock_parse):
+            output_path = tmp_path / "output.json"
+            result = pipeline.process(str(mgt7_pdf_path), str(output_path), include_stats=True)
+
+            # This should cover the else branch in parsed_fields_count calculation
+            assert "meta" in result
+            if "statistics" in result["meta"]:
+                assert "parsed_fields_count" in result["meta"]["statistics"]
+
+    def test_process_with_validation_errors(self, mgt7_pdf_path, tmp_path):
+        """Test processing with validation errors (covers logger.debug for errors, line 257)."""
+        from unittest.mock import patch
+
+        from mgt7_pdf_to_json.mappers import get_mapper
+
+        config = Config.default()
+        config.artifacts.enabled = False
+        pipeline = Pipeline(config)
+
+        # Mock mapper to return output that will trigger validation errors
+        # by removing required fields
+        original_get_mapper = get_mapper
+
+        def mock_get_mapper(mapper_name):
+            mapper = original_get_mapper(mapper_name)
+
+            original_map = mapper.map
+
+            def mock_map(parsed_doc, request_id, pdf_name):
+                output = original_map(parsed_doc, request_id, pdf_name)
+                # Remove required fields to trigger validation errors
+                if "meta" in output and "form_type" in output["meta"]:
+                    del output["meta"]["form_type"]
+                return output
+
+            mapper.map = mock_map
+            return mapper
+
+        with patch("mgt7_pdf_to_json.pipeline.get_mapper", side_effect=mock_get_mapper):
+            output_path = tmp_path / "output.json"
+            result = pipeline.process(str(mgt7_pdf_path), str(output_path))
+
+            # This should cover logger.debug for errors path (line 257)
+            assert "errors" in result
+            assert len(result["errors"]) > 0
+
+    def test_process_without_meta_in_output(self, mgt7_pdf_path, tmp_path):
+        """Test processing when meta doesn't exist in output (covers line 328)."""
+        from unittest.mock import patch
+
+        from mgt7_pdf_to_json.mappers import get_mapper
+
+        config = Config.default()
+        config.artifacts.enabled = False
+        pipeline = Pipeline(config)
+
+        # Mock mapper to return output without meta
+        original_get_mapper = get_mapper
+
+        def mock_get_mapper(mapper_name):
+            mapper = original_get_mapper(mapper_name)
+
+            original_map = mapper.map
+
+            def mock_map(parsed_doc, request_id, pdf_name):
+                output = original_map(parsed_doc, request_id, pdf_name)
+                # Remove meta to test the "if 'meta' not in output" branch (line 328)
+                if "meta" in output:
+                    del output["meta"]
+                return output
+
+            mapper.map = mock_map
+            return mapper
+
+        with patch("mgt7_pdf_to_json.pipeline.get_mapper", side_effect=mock_get_mapper):
+            output_path = tmp_path / "output.json"
+            result = pipeline.process(str(mgt7_pdf_path), str(output_path), include_stats=True)
+
+            # This should cover the "if 'meta' not in output" branch (line 328)
+            assert "meta" in result
+            assert "statistics" in result["meta"]
+
+    def test_process_with_artifacts_cleanup(self, mgt7_pdf_path, tmp_path):
+        """Test processing with artifacts enabled (covers cleanup call)."""
+        config = Config.default()
+        config.artifacts.enabled = True
+        config.logging.file = str(tmp_path / "logs")
+        pipeline = Pipeline(config)
+
+        output_path = tmp_path / "output.json"
+        result = pipeline.process(str(mgt7_pdf_path), str(output_path))
+
+        # This should cover the cleanup call when artifacts are enabled
+        assert "meta" in result

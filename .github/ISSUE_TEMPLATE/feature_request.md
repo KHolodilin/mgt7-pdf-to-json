@@ -27,9 +27,9 @@ assignees: ''
 
 <!-- Provide specific use cases or examples of how this feature would be used -->
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Additional Context
 
