@@ -1,6 +1,5 @@
 """Tests for document parsing components."""
 
-
 from mgt7_pdf_to_json.models import NormalizedDocument
 from mgt7_pdf_to_json.parser import DocumentParser, KeyValueParser, SectionSplitter, TableParser
 
