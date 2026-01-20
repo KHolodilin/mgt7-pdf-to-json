@@ -42,62 +42,128 @@ class Validator:
 
         # Validate structure
         if not isinstance(output, dict):
+            error_msg = (
+                f"Output must be a dictionary, got {type(output).__name__}. "
+                f"PDF path: {pdf_path if pdf_path else 'unknown'}. "
+                "This indicates a critical error in the processing pipeline."
+            )
             errors.append(
                 {
                     "code": "INVALID_STRUCTURE",
-                    "message": "Output must be a dictionary",
-                    "details": {},
+                    "message": error_msg,
+                    "details": {
+                        "expected_type": "dict",
+                        "actual_type": type(output).__name__,
+                        "pdf_path": pdf_path,
+                    },
                 }
             )
+            logger.error(error_msg)
             return warnings, errors
 
         # Validate meta section
         if "meta" not in output:
+            error_msg = (
+                "Missing 'meta' section in output JSON. "
+                f"PDF path: {pdf_path if pdf_path else 'unknown'}. "
+                "The 'meta' section is required and contains metadata about the processing."
+            )
             errors.append(
                 {
                     "code": "MISSING_SECTION",
-                    "message": "Missing 'meta' section",
-                    "details": {"section": "meta"},
+                    "message": error_msg,
+                    "details": {
+                        "section": "meta",
+                        "field_path": "meta",
+                        "pdf_path": pdf_path,
+                    },
                 }
             )
+            logger.error(error_msg)
         else:
             meta = output["meta"]
             # Validate required meta fields
             required_meta = ["request_id", "schema_version", "form_type"]
             for field in required_meta:
                 if field not in meta:
+                    field_path = f"meta.{field}"
+                    error_msg = (
+                        f"Missing required field '{field_path}' in output JSON. "
+                        f"PDF path: {pdf_path if pdf_path else 'unknown'}. "
+                        f"This field is required in the 'meta' section. "
+                        f"Available meta fields: {list(meta.keys())}."
+                    )
                     errors.append(
                         {
                             "code": "MISSING_FIELD",
-                            "message": f"meta.{field} is missing",
-                            "details": {"field": f"meta.{field}"},
+                            "message": error_msg,
+                            "details": {
+                                "field": field_path,
+                                "section": "meta",
+                                "available_fields": list(meta.keys()),
+                                "pdf_path": pdf_path,
+                            },
                         }
                     )
+                    logger.error(error_msg)
 
         # Validate required fields from config
         for field_path in self.config.validation.required_fields:
             value = self._get_nested_value(output, field_path)
             if value is None or value == "":
+                # Get parent path for context
+                path_parts = field_path.split(".")
+                parent_path = ".".join(path_parts[:-1]) if len(path_parts) > 1 else "root"
+                parent_value = (
+                    self._get_nested_value(output, parent_path) if parent_path != "root" else output
+                )
+
+                available_keys = list(parent_value.keys()) if isinstance(parent_value, dict) else []
+                error_msg = (
+                    f"Missing required field '{field_path}' in output JSON. "
+                    f"PDF path: {pdf_path if pdf_path else 'unknown'}. "
+                    f"Parent path: '{parent_path}'. "
+                    f"Available fields at parent: {available_keys if available_keys else 'none'}."
+                )
                 error = {
                     "code": "MISSING_FIELD",
-                    "message": f"{field_path} is missing",
-                    "details": {"field": field_path},
+                    "message": error_msg,
+                    "details": {
+                        "field": field_path,
+                        "parent_path": parent_path,
+                        "available_fields": available_keys,
+                        "pdf_path": pdf_path,
+                    },
                 }
 
                 if self.config.validation.strict:
                     errors.append(error)
+                    logger.error(error_msg)
                 else:
                     warnings.append(error)
+                    logger.warning(error_msg)
 
         # Validate data section
         if "data" not in output:
+            error_msg = (
+                "Missing 'data' section in output JSON. "
+                f"PDF path: {pdf_path if pdf_path else 'unknown'}. "
+                "The 'data' section contains the parsed document data. "
+                f"Available top-level sections: {list(output.keys())}."
+            )
             warnings.append(
                 {
                     "code": "MISSING_SECTION",
-                    "message": "Missing 'data' section",
-                    "details": {"section": "data"},
+                    "message": error_msg,
+                    "details": {
+                        "section": "data",
+                        "field_path": "data",
+                        "available_sections": list(output.keys()),
+                        "pdf_path": pdf_path,
+                    },
                 }
             )
+            logger.warning(error_msg)
 
         return warnings, errors
 

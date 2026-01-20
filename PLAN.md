@@ -8,8 +8,9 @@
 4. Реализацию изменений
 5. Тестирование и проверки
 6. Коммит изменений
-7. **Push ветки** (вручную): `git push origin feature/issue-{номер}-{название}`
-8. **Создание Pull Request** с веткой `main`/`master`
+7. **Поднять версию** в `pyproject.toml` перед созданием PR (patch version: 0.1.X → 0.1.X+1)
+8. **Push ветки** (вручную): `git push origin feature/issue-{номер}-{название}`
+9. **Создание Pull Request** с веткой `main`/`master`
 
 ---
 
@@ -244,31 +245,27 @@ git push origin feature/issue-5-add-processing-statistics
 
 ## Шаблон для создания Issue в GitHub
 
-```markdown
-## Title (EN)
-[English title from plan]
+**Важно:** Все описание issue должно быть полностью на английском языке.
 
-## Description (EN)
+```markdown
+## Description
 [English description from plan]
 
-## Описание (RU)
-[Русское описание задачи из плана]
-
-## Задачи
-- [ ] Задача 1
-- [ ] Задача 2
+## Tasks
+- [ ] Task 1
+- [ ] Task 2
 - [ ] ...
 
-## Критерии приемки
-- [ ] Все тесты проходят
-- [ ] Pre-commit проверки проходят
-- [ ] Пробный запуск конвертации успешен
-- [ ] Код закоммичен
-- [ ] Ветка запушена в удаленный репозиторий
-- [ ] Создан Pull Request с веткой main/master
+## Acceptance Criteria
+- [ ] All tests pass
+- [ ] Pre-commit checks pass
+- [ ] Test conversion run successful
+- [ ] Code committed
+- [ ] Branch pushed to remote repository
+- [ ] Pull Request created with main branch
+```
 
-## Ветка
-`feature/issue-{номер}-{название}`
+**Примечание:** Раздел "Branch" не нужно включать в описание issue. Ветка создается автоматически по шаблону `feature/issue-{номер}-{название}`.
 
 ## Шаги выполнения
 
@@ -297,7 +294,6 @@ git push origin feature/issue-5-add-processing-statistics
    ```
 
 4. **Создать Pull Request** через GitHub UI или CLI (вручную)
-```
 
 ---
 
