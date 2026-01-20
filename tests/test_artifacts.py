@@ -198,9 +198,13 @@ class TestArtifactManager:
         assert deleted == 0
         assert recent_file.exists()
 
-    def test_cleanup_when_dir_not_exists(self, config_with_artifacts):
+    def test_cleanup_when_dir_not_exists(self, config_with_artifacts, tmp_path):
         """Test cleanup when artifacts directory doesn't exist."""
-        config_with_artifacts.logging.file = "/nonexistent/path"
+        # Use a non-existent subdirectory in temp path (accessible but doesn't exist)
+        nonexistent_dir = tmp_path / "nonexistent" / "path"
+        config_with_artifacts.logging.file = str(nonexistent_dir)
+        # Disable artifacts to avoid creating directory in __init__
+        config_with_artifacts.artifacts.enabled = False
         manager = ArtifactManager(config_with_artifacts)
 
         deleted = manager.cleanup()
