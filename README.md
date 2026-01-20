@@ -2,7 +2,6 @@
 
 [![PyPI](https://img.shields.io/pypi/v/mgt7-pdf-to-json)](https://pypi.org/project/mgt7-pdf-to-json/)
 [![CI](https://github.com/KHolodilin/mgt7-pdf-to-json/actions/workflows/ci.yml/badge.svg)](https://github.com/KHolodilin/mgt7-pdf-to-json/actions/workflows/ci.yml)
-[![Build Status](https://github.com/KHolodilin/mgt7-pdf-to-json/actions/workflows/ci.yml/badge.svg)](https://github.com/KHolodilin/mgt7-pdf-to-json/actions/workflows/ci.yml)
 [![Test Coverage](https://codecov.io/gh/KHolodilin/mgt7-pdf-to-json/branch/main/graph/badge.svg)](https://codecov.io/gh/KHolodilin/mgt7-pdf-to-json)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/github/license/KHolodilin/mgt7-pdf-to-json)](LICENSE)
