@@ -1,7 +1,6 @@
 """Tests for validator."""
 
 import pytest
-
 from mgt7_pdf_to_json.config import Config
 from mgt7_pdf_to_json.validator import Validator
 

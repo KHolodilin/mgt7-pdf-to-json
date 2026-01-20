@@ -3,7 +3,6 @@
 from uuid import uuid4
 
 import pytest
-
 from mgt7_pdf_to_json.mappers import DbMapper, DefaultMapper, MinimalMapper, get_mapper
 from mgt7_pdf_to_json.models import ParsedDocument
 

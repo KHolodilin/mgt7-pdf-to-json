@@ -285,13 +285,13 @@ git push origin feature/issue-5-add-processing-statistics
    pytest
    pre-commit run --all-files
    python -m mgt7_pdf_to_json examples/... -o test_output.json
-   
+
    # Коммит
    git add .
    git commit -m "{type}: {description}
-   
+
    Fixes #{номер}"
-   
+
    # Push (вручную)
    git push origin feature/issue-{номер}-{название}
    ```
