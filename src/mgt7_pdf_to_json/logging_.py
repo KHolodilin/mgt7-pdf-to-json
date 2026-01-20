@@ -8,14 +8,14 @@ import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 if TYPE_CHECKING:
     from mgt7_pdf_to_json.config import Config
 
 # Context variable for request_id to be accessible in all components
-_request_id_context: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+_request_id_context: contextvars.ContextVar[str | None] = contextvars.ContextVar(
     "request_id", default=None
 )
 
