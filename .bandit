@@ -1,0 +1,4 @@
+[bandit]
+exclude_dirs = tests,htmlcov,.venv,venv,env
+skips = B101,B601
+tests = B201,B301,B401,B501,B601
