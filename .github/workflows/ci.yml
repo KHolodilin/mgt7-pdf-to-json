@@ -60,11 +60,11 @@ jobs:
         run: pytest tests/ -m "not integration and not smoke"
 
       - name: Run all tests with coverage
-        run: pytest tests/ --cov=src/mgt7_pdf_to_json --cov-report=term-missing --cov-report=xml
+        run: pytest tests/ --cov=src/mgt7_pdf_to_json --cov-report=term-missing --cov-report=xml --cov-fail-under=85
 
       - name: Check coverage
         run: |
-          coverage report --fail-under=70
+          coverage report --fail-under=85
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
