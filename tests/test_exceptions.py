@@ -5,8 +5,8 @@ import pytest
 from mgt7_pdf_to_json.exceptions import (
     ConfigurationError,
     ExtractionError,
-    MGT7Error,
     MappingError,
+    MGT7Error,
     ParsingError,
     UnsupportedFormatError,
     ValidationError,

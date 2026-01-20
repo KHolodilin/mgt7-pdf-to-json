@@ -483,7 +483,8 @@ class TestValidateInputFile:
 
         # Create a wrapper that returns mock_stat for our specific path
         def mock_stat_method(self):
-            if self == pdf_path:
+            # Compare paths as strings to work on all platforms
+            if str(self) == str(pdf_path):
                 return mock_stat
             return original_stat(self)
 
@@ -523,7 +524,8 @@ class TestValidateInputFile:
         def mock_stat_method(self):
             result = original_stat(self)
             # Only raise OSError when accessing st_size (second call in validate_input_file)
-            if self == pdf_path:
+            # Compare paths as strings to work on all platforms
+            if str(self) == str(pdf_path):
                 call_count["count"] += 1
                 if call_count["count"] > 1:  # After exists/is_file checks
                     return StatResult(result)

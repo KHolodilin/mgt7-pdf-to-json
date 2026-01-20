@@ -1,9 +1,6 @@
 """Tests for logging functionality."""
 
 import logging
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from mgt7_pdf_to_json.config import Config
 from mgt7_pdf_to_json.logging_ import (
@@ -33,6 +30,7 @@ class TestStructuredFormatter:
         )
         # Add exception info using sys.exc_info()
         import sys
+
         try:
             raise ValueError("Test exception")
         except ValueError:
@@ -75,6 +73,7 @@ class TestConsoleFormatter:
         )
         # Add exception info using sys.exc_info()
         import sys
+
         try:
             raise ValueError("Test exception")
         except ValueError:

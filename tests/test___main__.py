@@ -1,9 +1,6 @@
 """Tests for __main__.py module entry point."""
 
-import sys
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from mgt7_pdf_to_json import __main__
 from mgt7_pdf_to_json.cli import main as cli_main
@@ -31,7 +28,7 @@ class TestMainModule:
         # We need to patch sys.argv to avoid argparse errors
         # And patch cli.main to return a value
         with patch("sys.argv", ["mgt7pdf2json", str(pdf_path)]):
-            with patch("mgt7_pdf_to_json.__main__.main", return_value=0) as mock_main:
+            with patch("mgt7_pdf_to_json.__main__.main", return_value=0):
                 # Since __main__.main is cli.main, we need to patch it at the module level
                 result = __main__.main()
                 # The mock won't work because __main__.main is cli.main directly

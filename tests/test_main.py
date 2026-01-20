@@ -2,18 +2,13 @@
 
 from unittest.mock import patch
 
-import pytest
-
-from mgt7_pdf_to_json.cli import main
-
 
 def test_main_module_entry_point():
     """Test __main__ module entry point."""
     # Test that __main__ can be imported and executed
-    import sys
 
     with patch("sys.argv", ["mgt7pdf2json", "--help"]):
-        with patch("sys.exit") as mock_exit:
+        with patch("sys.exit"):
             # Import and execute __main__
             import mgt7_pdf_to_json.__main__  # noqa: F401
 
