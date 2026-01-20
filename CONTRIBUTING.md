@@ -235,10 +235,10 @@ def extract_pdf(pdf_path: str) -> dict[str, Any]:
    def test_parse_cin_from_text():
        # Arrange
        text = "CIN: U17120DL2013PTC262515"
-       
+
        # Act
        result = parser.parse(text)
-       
+
        # Assert
        assert result["CIN"] == "U17120DL2013PTC262515"
    ```

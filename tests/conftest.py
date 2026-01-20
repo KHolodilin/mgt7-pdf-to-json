@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import pytest
-
 from mgt7_pdf_to_json.config import Config
 
 

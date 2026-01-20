@@ -281,17 +281,17 @@ pipeline = Pipeline(config)
 
 try:
     result = pipeline.process("input.pdf")
-    
+
     if result["errors"]:
         print("Processing completed with errors:")
         for error in result["errors"]:
             print(f"  {error['code']}: {error['message']}")
-    
+
     if result["warnings"]:
         print("Warnings:")
         for warning in result["warnings"]:
             print(f"  {warning['code']}: {warning['message']}")
-            
+
 except FileNotFoundError:
     print("Error: PDF file not found")
 except ValueError as e:

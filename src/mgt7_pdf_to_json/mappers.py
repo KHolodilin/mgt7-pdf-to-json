@@ -219,7 +219,7 @@ def get_mapper(mapper_name: str) -> BaseMapper:
     Raises:
         ValueError: If mapper name is unknown
     """
-    mappers = {
+    mappers: dict[str, type[BaseMapper]] = {
         "default": DefaultMapper,
         "minimal": MinimalMapper,
         "db": DbMapper,

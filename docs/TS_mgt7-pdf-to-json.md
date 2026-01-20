@@ -1,7 +1,7 @@
 # Technical Specification (TS) — **mgt7-pdf-to-json**
-Document version: **1.0**  
-Status: **Canonical final version**  
-Document language: **English**  
+Document version: **1.0**
+Status: **Canonical final version**
+Document language: **English**
 Repository: **mgt7-pdf-to-json**
 
 ---
@@ -73,11 +73,11 @@ The project must support:
 - JSON output file (CLI) or JSON object (library mode).
 
 ### 5.3. Processing pipeline
-1) Extract: PDF → RawDocument  
-2) Normalize: RawDocument → NormalizedDocument  
-3) Parse: NormalizedDocument → ParsedDocument  
-4) Map: ParsedDocument → Output JSON (schema)  
-5) Validate: Output JSON → warnings/errors  
+1) Extract: PDF → RawDocument
+2) Normalize: RawDocument → NormalizedDocument
+3) Parse: NormalizedDocument → ParsedDocument
+4) Map: ParsedDocument → Output JSON (schema)
+5) Validate: Output JSON → warnings/errors
 6) Write: save JSON to file (CLI)
 
 ---
