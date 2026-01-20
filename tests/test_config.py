@@ -1,5 +1,6 @@
 """Tests for configuration management."""
 
+import pytest
 import yaml
 
 from mgt7_pdf_to_json.config import Config
@@ -67,3 +68,19 @@ class TestConfig:
         """Test loading default config when file doesn't exist."""
         config = Config.from_file_or_default("nonexistent.yml")
         assert config.logging.level == "INFO"  # default
+
+    def test_from_yaml_file_not_found(self, tmp_path):
+        """Test from_yaml raises FileNotFoundError when file doesn't exist."""
+        nonexistent_file = tmp_path / "nonexistent.yml"
+        with pytest.raises(FileNotFoundError, match="Config file not found"):
+            Config.from_yaml(nonexistent_file)
+
+    def test_from_file_or_default_with_existing_path(self, tmp_path):
+        """Test from_file_or_default with existing file path."""
+        config_data = {"logging": {"level": "DEBUG"}}
+        config_file = tmp_path / "test_config.yml"
+        with open(config_file, "w") as f:
+            yaml.dump(config_data, f)
+
+        config = Config.from_file_or_default(config_file)
+        assert config.logging.level == "DEBUG"

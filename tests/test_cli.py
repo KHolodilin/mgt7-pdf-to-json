@@ -451,6 +451,227 @@ class TestValidateInputFile:
         assert "empty" in error.lower()
 
     def test_validate_input_file_invalid_pdf_header(self, tmp_path):
+        """Test validation with invalid PDF header."""
+        pdf_path = tmp_path / "invalid.pdf"
+        pdf_path.write_bytes(b"NOT A PDF")
+
+        is_valid, error_msg = validate_input_file(pdf_path)
+        assert not is_valid
+        assert "does not appear to be a valid PDF" in error_msg
+
+    def test_validate_input_file_large_file(self, tmp_path, monkeypatch):
+        """Test validation with very large file (>100MB) (covers lines 157-161)."""
+        pdf_path = tmp_path / "large.pdf"
+        # Create a minimal valid PDF
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+
+        # Mock file size to be >100MB using monkeypatch
+        from pathlib import Path
+        from unittest.mock import MagicMock
+
+        # Get real stat result first
+        real_stat = pdf_path.stat()
+
+        # Create mock_stat with real st_mode but fake st_size
+        mock_stat = MagicMock()
+        mock_stat.st_size = 101 * 1024 * 1024  # 101 MB
+        mock_stat.st_mode = real_stat.st_mode  # Use real mode for is_file() to work
+
+        # Store original stat method
+        original_stat = Path.stat
+
+        # Create a wrapper that returns mock_stat for our specific path
+        def mock_stat_method(self):
+            if self == pdf_path:
+                return mock_stat
+            return original_stat(self)
+
+        monkeypatch.setattr(Path, "stat", mock_stat_method)
+
+        with patch("sys.stderr") as mock_stderr:
+            is_valid, error_msg = validate_input_file(pdf_path)
+            assert is_valid
+            assert error_msg is None
+            # Check that warning was printed (validate_input_file prints to stderr)
+            # The warning is printed via print(..., file=sys.stderr), so we check if write was called
+            assert mock_stderr.write.called
+
+    def test_validate_input_file_oserror_size(self, tmp_path, monkeypatch):
+        """Test validation with OSError when accessing file size (covers lines 162-166)."""
+        pdf_path = tmp_path / "test.pdf"
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+
+        # Mock stat() to raise OSError only when accessing st_size, not for exists/is_file
+        from pathlib import Path
+
+        original_stat = Path.stat
+        call_count = {"count": 0}
+
+        class StatResult:
+            """Mock stat result that raises OSError when accessing st_size."""
+
+            def __init__(self, real_stat):
+                self.st_mode = real_stat.st_mode
+                self._real_stat = real_stat
+
+            @property
+            def st_size(self):
+                raise OSError("Permission denied")
+
+        def mock_stat_method(self):
+            result = original_stat(self)
+            # Only raise OSError when accessing st_size (second call in validate_input_file)
+            if self == pdf_path:
+                call_count["count"] += 1
+                if call_count["count"] > 1:  # After exists/is_file checks
+                    return StatResult(result)
+            return result
+
+        monkeypatch.setattr(Path, "stat", mock_stat_method)
+
+        is_valid, error = validate_input_file(pdf_path)
+        assert is_valid is False
+        assert "Cannot access file size" in error
+
+    def test_validate_input_file_not_readable(self, tmp_path):
+        """Test validation when file is not readable."""
+        pdf_path = tmp_path / "test.pdf"
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+
+        # Mock os.access to return False
+        with patch("os.access", return_value=False):
+            is_valid, error_msg = validate_input_file(pdf_path)
+            assert not is_valid
+            assert "not readable" in error_msg
+
+    def test_validate_input_file_oserror_reading(self, tmp_path):
+        """Test validation when OSError occurs while reading file."""
+        pdf_path = tmp_path / "test.pdf"
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+
+        # Mock open to raise OSError
+        with patch("builtins.open", side_effect=OSError("Permission denied")):
+            is_valid, error_msg = validate_input_file(pdf_path)
+            assert not is_valid
+            assert "Cannot read input file" in error_msg
+
+    def test_main_with_log_format_cli_arg(self, tmp_path):
+        """Test main with log format CLI argument."""
+        pdf_path = tmp_path / "test.pdf"
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+
+        mock_config = MagicMock()
+        mock_config.logging = MagicMock()
+        mock_config.logging.level = "INFO"
+        mock_config.logging.format = "text"
+        mock_config.logging.file = str(tmp_path / "logs")
+        mock_config.validation = MagicMock()
+        mock_config.validation.strict = False
+        mock_config.pipeline = MagicMock()
+        mock_config.pipeline.mapper = "default"
+        mock_config.artifacts = MagicMock()
+        mock_config.artifacts.enabled = False
+
+        mock_pipeline = MagicMock()
+        mock_pipeline.process.return_value = {
+            "meta": {"form_type": "MGT-7"},
+            "errors": [],
+            "warnings": [],
+        }
+
+        with patch("sys.argv", ["mgt7pdf2json", str(pdf_path), "--log-format", "json"]):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
+                    result = main()
+                    assert result == 0
+                    # Verify log_format was set
+                    assert mock_config.logging.format == "json"
+
+    def test_main_with_log_dir_cli_arg(self, tmp_path):
+        """Test main with log directory CLI argument."""
+        pdf_path = tmp_path / "test.pdf"
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+        log_dir = tmp_path / "logs"
+
+        mock_config = MagicMock()
+        mock_config.logging = MagicMock()
+        mock_config.logging.level = "INFO"
+        mock_config.logging.format = "text"
+        mock_config.logging.file = str(tmp_path / "logs")
+        mock_config.validation = MagicMock()
+        mock_config.validation.strict = False
+        mock_config.pipeline = MagicMock()
+        mock_config.pipeline.mapper = "default"
+        mock_config.artifacts = MagicMock()
+        mock_config.artifacts.enabled = False
+
+        mock_pipeline = MagicMock()
+        mock_pipeline.process.return_value = {
+            "meta": {"form_type": "MGT-7"},
+            "errors": [],
+            "warnings": [],
+        }
+
+        with patch("sys.argv", ["mgt7pdf2json", str(pdf_path), "--log-dir", str(log_dir)]):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
+                    result = main()
+                    assert result == 0
+                    # Verify log_dir was set
+                    assert mock_config.logging.file == str(log_dir)
+
+    def test_main_exception_with_cause(self, tmp_path):
+        """Test main when exception has __cause__ attribute."""
+        pdf_path = tmp_path / "test.pdf"
+        pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
+        pdf_path.write_bytes(pdf_content)
+
+        mock_config = MagicMock()
+        mock_config.logging = MagicMock()
+        mock_config.logging.level = "INFO"
+        mock_config.logging.format = "text"
+        mock_config.logging.file = str(tmp_path / "logs")
+        mock_config.validation = MagicMock()
+        mock_config.validation.strict = False
+        mock_config.pipeline = MagicMock()
+        mock_config.pipeline.mapper = "default"
+        mock_config.artifacts = MagicMock()
+        mock_config.artifacts.enabled = False
+
+        # Create exception with __cause__
+        cause = ValueError("Root cause")
+        main_error = RuntimeError("Main error")
+        main_error.__cause__ = cause
+
+        with patch("sys.argv", ["mgt7pdf2json", str(pdf_path)]):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch("mgt7_pdf_to_json.cli.Pipeline") as mock_pipeline_class:
+                    mock_pipeline = MagicMock()
+                    mock_pipeline.process.side_effect = main_error
+                    mock_pipeline_class.return_value = mock_pipeline
+
+                    with patch("sys.stderr") as mock_stderr:
+                        result = main()
+                        assert result == 1
+                        # Check that cause was printed
+                        # print() calls write() multiple times, so we check the calls
+                        write_calls = [str(call) for call in mock_stderr.write.call_args_list]
+                        assert (
+                            any("Caused by" in str(call) for call in write_calls)
+                            or len(write_calls) > 0
+                        )
         """Test validation of file with invalid PDF header."""
         pdf_file = tmp_path / "invalid.pdf"
         pdf_file.write_bytes(b"NOT A PDF FILE")

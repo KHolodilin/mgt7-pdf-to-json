@@ -80,3 +80,38 @@ class TestMappers:
 
         with pytest.raises(ValueError):
             get_mapper("unknown")
+
+    def test_db_mapper_with_tables(self, sample_parsed):
+        """Test DB mapper with table data."""
+        mapper = DbMapper()
+        request_id = str(uuid4())
+
+        # Add table data to parsed document
+        sample_parsed.data["directors"] = [
+            {"name": "Director 1", "din": "12345678"},
+            {"name": "Director 2", "din": "87654321"},
+        ]
+
+        result = mapper.map(sample_parsed, request_id, "test.pdf")
+
+        assert "tables" in result["data"]
+        assert "directors" in result["data"]["tables"]
+        assert len(result["data"]["tables"]["directors"]) == 2
+        # Check that request_id was added to each row
+        for row in result["data"]["tables"]["directors"]:
+            assert row["request_id"] == request_id
+            assert "name" in row
+            assert "din" in row
+
+    def test_db_mapper_with_non_list_table_data(self, sample_parsed):
+        """Test DB mapper when table data is not a list."""
+        mapper = DbMapper()
+        request_id = str(uuid4())
+
+        # Add non-list data (should be skipped)
+        sample_parsed.data["some_dict"] = {"key": "value"}
+
+        result = mapper.map(sample_parsed, request_id, "test.pdf")
+
+        # Non-list data should not appear in tables
+        assert "some_dict" not in result["data"]["tables"]
