@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mgt7_pdf_to_json.cli import main, parse_args
+from mgt7_pdf_to_json.cli import main, parse_args, validate_input_file
 
 
 class TestParseArgs:
@@ -81,6 +81,18 @@ class TestParseArgs:
         with patch("sys.argv", ["mgt7pdf2json", "input.pdf", "--fail-on-warnings"]):
             args = parse_args()
             assert args.fail_on_warnings is True
+
+    def test_parse_args_with_include_stats(self):
+        """Test parsing with include-stats flag."""
+        with patch("sys.argv", ["mgt7pdf2json", "input.pdf", "--include-stats"]):
+            args = parse_args()
+            assert args.include_stats is True
+
+    def test_parse_args_without_include_stats(self):
+        """Test parsing without include-stats flag (default)."""
+        with patch("sys.argv", ["mgt7pdf2json", "input.pdf"]):
+            args = parse_args()
+            assert args.include_stats is False
 
 
 class TestMain:
@@ -358,3 +370,91 @@ class TestMain:
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     main()
                     assert mock_config.validation.strict is True
+
+    def test_main_with_include_stats(self, mock_config, mock_pipeline, tmp_path):
+        """Test main with include-stats flag."""
+        input_file = tmp_path / "test.pdf"
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+        mock_pipeline.process.return_value = {
+            "meta": {
+                "form_type": "MGT-7",
+                "request_id": "test-123",
+                "statistics": {
+                    "pages_count": 5,
+                    "tables_count": 2,
+                    "parsed_fields_count": 10,
+                },
+            },
+            "data": {},
+            "warnings": [],
+            "errors": [],
+        }
+
+        with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--include-stats"]):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
+                    result = main()
+                    assert result == 0
+                    # Verify that include_stats was passed to pipeline
+                    mock_pipeline.process.assert_called_once()
+                    call_args = mock_pipeline.process.call_args
+                    assert call_args.kwargs.get("include_stats") is True
+
+
+class TestValidateInputFile:
+    """Test input file validation."""
+
+    def test_validate_input_file_exists(self, tmp_path):
+        """Test validation of existing PDF file."""
+        pdf_file = tmp_path / "test.pdf"
+        pdf_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+        is_valid, error = validate_input_file(pdf_file)
+        assert is_valid is True
+        assert error is None
+
+    def test_validate_input_file_not_exists(self, tmp_path):
+        """Test validation of non-existent file."""
+        pdf_file = tmp_path / "nonexistent.pdf"
+        is_valid, error = validate_input_file(pdf_file)
+        assert is_valid is False
+        assert error is not None
+        assert "not found" in error.lower()
+
+    def test_validate_input_file_not_file(self, tmp_path):
+        """Test validation when path is a directory."""
+        pdf_dir = tmp_path / "test_dir"
+        pdf_dir.mkdir()
+        is_valid, error = validate_input_file(pdf_dir)
+        assert is_valid is False
+        assert error is not None
+        assert "not a file" in error.lower()
+
+    def test_validate_input_file_wrong_extension(self, tmp_path):
+        """Test validation with wrong file extension."""
+        txt_file = tmp_path / "test.txt"
+        txt_file.write_text("Not a PDF")
+        is_valid, error = validate_input_file(txt_file)
+        assert is_valid is False
+        assert error is not None
+        assert "pdf extension" in error.lower()
+
+    def test_validate_input_file_empty(self, tmp_path):
+        """Test validation of empty file."""
+        pdf_file = tmp_path / "empty.pdf"
+        pdf_file.write_bytes(b"")
+        is_valid, error = validate_input_file(pdf_file)
+        assert is_valid is False
+        assert error is not None
+        assert "empty" in error.lower()
+
+    def test_validate_input_file_invalid_pdf_header(self, tmp_path):
+        """Test validation of file with invalid PDF header."""
+        pdf_file = tmp_path / "invalid.pdf"
+        pdf_file.write_bytes(b"NOT A PDF FILE")
+        is_valid, error = validate_input_file(pdf_file)
+        assert is_valid is False
+        assert error is not None
+        assert "not appear to be a valid pdf" in error.lower() or "valid pdf" in error.lower()

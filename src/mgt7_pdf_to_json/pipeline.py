@@ -53,13 +53,16 @@ class Pipeline:
         # Setup logging
         LoggerFactory.setup_logging(config)
 
-    def process(self, pdf_path: str, output_path: str | None = None) -> dict[str, Any]:
+    def process(
+        self, pdf_path: str, output_path: str | None = None, include_stats: bool = False
+    ) -> dict[str, Any]:
         """
         Process PDF file and convert to JSON.
 
         Args:
             pdf_path: Path to input PDF file
             output_path: Optional output JSON path. If not provided, uses <pdf_path>.json
+            include_stats: Whether to include processing statistics in output
 
         Returns:
             Dictionary with processing result
@@ -84,6 +87,12 @@ class Pipeline:
 
         start_time = time.time()
 
+        # Initialize statistics
+        statistics: dict[str, Any] = {
+            "processing_start_time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time)),
+            "processing_start_timestamp": start_time,
+        }
+
         try:
             # Step 1: Extract
             step_start = time.time()
@@ -97,6 +106,12 @@ class Pipeline:
             )
 
             raw_doc = self.extractor.extract(pdf_path)
+
+            # Collect statistics from extraction
+            if include_stats:
+                statistics["pages_count"] = raw_doc.metadata.get("total_pages", 0)
+                statistics["tables_count"] = raw_doc.metadata.get("total_tables", 0)
+                statistics["extraction_duration_ms"] = (time.time() - step_start) * 1000
 
             duration_ms = (time.time() - step_start) * 1000
             log_with_request_id(
@@ -151,6 +166,26 @@ class Pipeline:
             )
 
             parsed_doc = self.parser.parse(normalized_doc, raw_doc.tables)
+
+            # Collect statistics from parsing
+            if include_stats:
+                # Count parsed fields
+                parsed_fields_count = 0
+                if parsed_doc.company:
+                    parsed_fields_count += len(parsed_doc.company)
+                if parsed_doc.financial_year:
+                    parsed_fields_count += len(parsed_doc.financial_year)
+                if parsed_doc.data:
+                    # Count fields in data section
+                    for _key, value in parsed_doc.data.items():
+                        if isinstance(value, dict):
+                            parsed_fields_count += len(value)
+                        elif isinstance(value, list):
+                            parsed_fields_count += len(value)
+                        else:
+                            parsed_fields_count += 1
+                statistics["parsed_fields_count"] = parsed_fields_count
+                statistics["parsing_duration_ms"] = (time.time() - step_start) * 1000
 
             duration_ms = (time.time() - step_start) * 1000
             parsed_keys = len(parsed_doc.data.get("key_value_pairs", {}))
@@ -277,6 +312,40 @@ class Pipeline:
                 self.artifact_manager.cleanup(request_id)
 
             total_duration_ms = (time.time() - start_time) * 1000
+
+            # Finalize statistics
+            if include_stats:
+                end_time = time.time()
+                statistics["processing_end_time"] = time.strftime(
+                    "%Y-%m-%d %H:%M:%S", time.localtime(end_time)
+                )
+                statistics["processing_end_timestamp"] = end_time
+                statistics["processing_total_duration_ms"] = total_duration_ms
+                statistics["processing_total_duration_seconds"] = total_duration_ms / 1000.0
+
+                # Add statistics to output metadata
+                if "meta" not in output:
+                    output["meta"] = {}
+                output["meta"]["statistics"] = statistics
+
+                # Log statistics
+                stats_summary = (
+                    f"Processing statistics: "
+                    f"pages={statistics.get('pages_count', 0)}, "
+                    f"tables={statistics.get('tables_count', 0)}, "
+                    f"parsed_fields={statistics.get('parsed_fields_count', 0)}, "
+                    f"total_time={statistics.get('processing_total_duration_seconds', 0):.2f}s"
+                )
+                log_with_request_id(
+                    logger,
+                    logging.INFO,
+                    stats_summary,
+                    request_id,
+                    pdf_path=pdf_name,
+                    step="statistics",
+                    **statistics,
+                )
+
             log_with_request_id(
                 logger,
                 logging.INFO,

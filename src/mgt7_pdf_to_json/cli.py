@@ -103,6 +103,12 @@ def parse_args() -> argparse.Namespace:
         help="Exit with error code if warnings exist",
     )
 
+    parser.add_argument(
+        "--include-stats",
+        action="store_true",
+        help="Include processing statistics in output JSON and logs",
+    )
+
     return parser.parse_args()
 
 
@@ -233,7 +239,9 @@ def main() -> int:
     # Process PDF
     try:
         pipeline = Pipeline(config)
-        result = pipeline.process(str(input_path), output_path=str(output_path))
+        result = pipeline.process(
+            str(input_path), output_path=str(output_path), include_stats=args.include_stats
+        )
 
         # Check for validation errors in strict mode
         errors = result.get("errors", [])
