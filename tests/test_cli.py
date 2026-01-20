@@ -485,7 +485,7 @@ class TestValidateInputFile:
         # Store the target path as a string for reliable comparison
         target_path_str = str(pdf_path.absolute())
 
-        def mock_stat_method(self):
+        def mock_stat_method(self, *args, **kwargs):
             # Compare paths as absolute strings to work on all platforms
             # Convert both to absolute paths for reliable comparison
             try:
@@ -495,7 +495,7 @@ class TestValidateInputFile:
                 self_abs = str(self)
             if self_abs == target_path_str:
                 return mock_stat
-            return original_stat(self)
+            return original_stat(self, *args, **kwargs)
 
         monkeypatch.setattr(Path, "stat", mock_stat_method)
 
@@ -533,8 +533,8 @@ class TestValidateInputFile:
         # Store the target path as a string for reliable comparison
         target_path_str = str(pdf_path.absolute())
 
-        def mock_stat_method(self):
-            result = original_stat(self)
+        def mock_stat_method(self, *args, **kwargs):
+            result = original_stat(self, *args, **kwargs)
             # Only raise OSError when accessing st_size (second call in validate_input_file)
             # Compare paths as absolute strings to work on all platforms
             try:
