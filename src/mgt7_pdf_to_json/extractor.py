@@ -112,7 +112,9 @@ class PdfPlumberExtractor:
                 # Check if we have any extractable text
                 if not full_text.strip():
                     pages_without_text = [
-                        p["page"] for p in pages_text if not p.get("text", "").strip()
+                        p["page"]
+                        for p in pages_text
+                        if not (text := str(p.get("text", ""))) or not text.strip()
                     ]
                     error_msg = (
                         f"No extractable text found in PDF '{pdf_path.name}' "
@@ -152,25 +154,28 @@ class PdfPlumberExtractor:
             raise
         except FileNotFoundError:
             raise
-        except pdfplumber.exceptions.PDFSyntaxError as e:
-            error_msg = (
-                f"PDF syntax error in file '{pdf_path.name}': {e}. "
-                "The PDF file may be corrupted or not a valid PDF. "
-                f"File size: {file_size / 1024:.2f} KB. "
-                "Please verify the file integrity."
-            )
-            logger.error(error_msg, exc_info=True)
-            from mgt7_pdf_to_json.exceptions import ExtractionError
-
-            raise ExtractionError(error_msg) from e
         except Exception as e:
-            error_type = type(e).__name__
-            error_msg = (
-                f"Failed to extract PDF '{pdf_path.name}': {error_type}: {e}. "
-                f"File size: {file_size / 1024:.2f} KB. "
-                "Please check if the file is a valid PDF and not corrupted."
-            )
-            logger.error(error_msg, exc_info=True)
-            from mgt7_pdf_to_json.exceptions import ExtractionError
+            # Check if it's a PDF syntax error (pdfplumber may raise various exceptions)
+            error_name = type(e).__name__
+            if "PDFSyntaxError" in error_name or "SyntaxError" in error_name:
+                error_msg = (
+                    f"PDF syntax error in file '{pdf_path.name}': {e}. "
+                    "The PDF file may be corrupted or not a valid PDF. "
+                    f"File size: {file_size / 1024:.2f} KB. "
+                    "Please verify the file integrity."
+                )
+                logger.error(error_msg, exc_info=True)
+                from mgt7_pdf_to_json.exceptions import ExtractionError
 
-            raise ExtractionError(error_msg) from e
+                raise ExtractionError(error_msg) from e
+            else:
+                error_type = type(e).__name__
+                error_msg = (
+                    f"Failed to extract PDF '{pdf_path.name}': {error_type}: {e}. "
+                    f"File size: {file_size / 1024:.2f} KB. "
+                    "Please check if the file is a valid PDF and not corrupted."
+                )
+                logger.error(error_msg, exc_info=True)
+                from mgt7_pdf_to_json.exceptions import ExtractionError
+
+                raise ExtractionError(error_msg) from e
