@@ -1,0 +1,30 @@
+# Logging settings
+logging:
+  level: INFO                      # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: console                  # "console" (readable) or "json" (structured)
+  format_file: json                # Format for file logs (default: "json")
+  file: logs                       # Directory for log files
+  date_format: "%d-%m-%Y"          # Used as log file name: <DATE>.log
+
+# Artifacts (debug intermediate files)
+artifacts:
+  enabled: false
+  dir: artifacts                   # artifacts directory inside logging.file
+  save_raw: true
+  save_normalized: true
+  save_parsed: true
+  save_output: false
+  keep_days: 7                     # retention policy in days
+
+# Parsing/mapping
+pipeline:
+  mapper: default                  # default|minimal|db
+
+validation:
+  strict: false
+  required_fields:
+    - meta.form_type
+    - meta.financial_year.from
+    - meta.financial_year.to
+    - company.cin
+    - company.name
