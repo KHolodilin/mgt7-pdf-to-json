@@ -8,8 +8,9 @@
 4. Реализацию изменений
 5. Тестирование и проверки
 6. Коммит изменений
-7. **Push ветки** (вручную): `git push origin feature/issue-{номер}-{название}`
-8. **Создание Pull Request** с веткой `main`/`master`
+7. **Поднять версию** в `pyproject.toml` перед созданием PR (patch version: 0.1.X → 0.1.X+1)
+8. **Push ветки** (вручную): `git push origin feature/issue-{номер}-{название}`
+9. **Создание Pull Request** с веткой `main`/`master`
 
 ---
 
