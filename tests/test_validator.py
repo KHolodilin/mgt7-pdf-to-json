@@ -89,3 +89,59 @@ class TestValidator:
 
         # In non-strict mode, missing required fields should be warnings
         assert len(warnings) > 0
+
+    def test_validate_invalid_structure(self, validator):
+        """Test validation with invalid structure (not a dict)."""
+        output = "not a dict"  # type: ignore[assignment]
+
+        warnings, errors = validator.validate(output)  # type: ignore[arg-type]
+
+        assert len(errors) > 0
+        assert any(e["code"] == "INVALID_STRUCTURE" for e in errors)
+
+    def test_validate_missing_meta_fields(self, validator):
+        """Test validation with missing meta fields."""
+        output = {
+            "meta": {
+                "request_id": "test-id",
+                # Missing schema_version and form_type
+            },
+            "data": {},
+        }
+
+        warnings, errors = validator.validate(output)
+
+        assert len(errors) > 0
+        assert any(e["code"] == "MISSING_FIELD" for e in errors)
+
+    def test_validate_missing_data_section(self, validator):
+        """Test validation with missing data section."""
+        output = {
+            "meta": {
+                "request_id": "test-id",
+                "schema_version": "1.0",
+                "form_type": "MGT-7",
+            },
+            # Missing data section
+        }
+
+        warnings, errors = validator.validate(output)
+
+        assert len(warnings) > 0
+        assert any(w["code"] == "MISSING_SECTION" for w in warnings)
+
+    def test_validate_with_pdf_path(self, validator):
+        """Test validation with PDF path provided."""
+        output = {
+            "meta": {
+                "request_id": "test-id",
+                "schema_version": "1.0",
+                "form_type": "MGT-7",
+            },
+            "data": {},
+        }
+
+        warnings, errors = validator.validate(output, pdf_path="test.pdf")
+
+        assert isinstance(warnings, list)
+        assert isinstance(errors, list)

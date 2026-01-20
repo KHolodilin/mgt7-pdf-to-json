@@ -220,3 +220,27 @@ class TestArtifactManager:
         deleted = manager.cleanup(request_id)
 
         assert deleted == 0  # No old files
+
+    def test_cleanup_without_request_id(self, config_with_artifacts, temp_dir):
+        """Test cleanup without request ID (uses logger.info)."""
+        manager = ArtifactManager(config_with_artifacts)
+
+        deleted = manager.cleanup()
+
+        assert deleted == 0  # No old files
+
+    def test_cleanup_error_handling(self, config_with_artifacts, temp_dir):
+        """Test cleanup error handling when file deletion fails."""
+        manager = ArtifactManager(config_with_artifacts)
+        artifacts_dir = manager.artifacts_dir
+
+        # Create artifact file
+        artifact_file = artifacts_dir / "test.raw.json"
+        artifact_file.write_text('{"text": "test"}', encoding="utf-8")
+
+        # Mock Path.unlink to raise exception (patch the method, not the instance)
+        with patch("pathlib.Path.unlink", side_effect=OSError("Permission denied")):
+            deleted = manager.cleanup()
+
+        # Should handle error gracefully and continue
+        assert deleted == 0  # File wasn't deleted due to error
