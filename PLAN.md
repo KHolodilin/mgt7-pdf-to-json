@@ -4,9 +4,12 @@
 Каждая задача включает:
 1. Создание GitHub Issue
 2. Создание ветки `feature/issue-{номер}-{название}`
-3. Реализацию изменений
-4. Тестирование и проверки
-5. Коммит и push
+3. **Переход на новую ветку** (вручную): `git checkout -b feature/issue-{номер}-{название}`
+4. Реализацию изменений
+5. Тестирование и проверки
+6. Коммит изменений
+7. **Push ветки** (вручную): `git push origin feature/issue-{номер}-{название}`
+8. **Создание Pull Request** с веткой `main`/`master`
 
 ---
 
@@ -74,12 +77,21 @@ git commit -m "test: improve test coverage to 85%+"
 
 ### По окончанию:
 ```bash
+# Тестирование и проверки
 pytest
 pre-commit run --all-files
 python -m mgt7_pdf_to_json examples/U17120DL2013PTC262515_mgt7.pdf -o test_output.json
 python -m mgt7_pdf_to_json nonexistent.pdf  # Проверка обработки ошибок
+
+# Коммит
 git add .
-git commit -m "feat: improve error handling and validation"
+git commit -m "feat: improve error handling and validation
+
+Fixes #2"
+
+# Push и создание PR (вручную)
+git push origin feature/issue-2-improve-error-handling
+# Затем создать Pull Request через GitHub UI или CLI
 ```
 
 ---
@@ -108,12 +120,21 @@ git commit -m "feat: improve error handling and validation"
 
 ### По окончанию:
 ```bash
+# Тестирование и проверки
 mypy src/mgt7_pdf_to_json --ignore-missing-imports
 pytest
 pre-commit run --all-files
 python -m mgt7_pdf_to_json examples/U17120DL2013PTC262515_mgt7.pdf -o test_output.json
+
+# Коммит
 git add .
-git commit -m "refactor: improve code quality and type hints"
+git commit -m "refactor: improve code quality and type hints
+
+Fixes #3"
+
+# Push и создание PR (вручную)
+git push origin feature/issue-3-improve-code-quality
+# Затем создать Pull Request через GitHub UI или CLI
 ```
 
 ---
@@ -145,13 +166,22 @@ git commit -m "refactor: improve code quality and type hints"
 
 ### По окончанию:
 ```bash
+# Тестирование и проверки
 safety check
 bandit -r src/
 pytest
 pre-commit run --all-files
 python -m mgt7_pdf_to_json examples/U17120DL2013PTC262515_mgt7.pdf -o test_output.json
+
+# Коммит
 git add .
-git commit -m "ci: add security checks (safety, bandit) and dependabot"
+git commit -m "ci: add security checks (safety, bandit) and dependabot
+
+Fixes #4"
+
+# Push и создание PR (вручную)
+git push origin feature/issue-4-add-security-checks
+# Затем создать Pull Request через GitHub UI или CLI
 ```
 
 ---
@@ -183,12 +213,21 @@ git commit -m "ci: add security checks (safety, bandit) and dependabot"
 
 ### По окончанию:
 ```bash
+# Тестирование и проверки
 pytest
 pre-commit run --all-files
 python -m mgt7_pdf_to_json examples/U17120DL2013PTC262515_mgt7.pdf -o test_output.json --include-stats
 python -m mgt7_pdf_to_json examples/KA903UC002704392_mgt7a.pdf -o test_output2.json --include-stats
+
+# Коммит
 git add .
-git commit -m "feat: add processing statistics (time, pages, tables)"
+git commit -m "feat: add processing statistics (time, pages, tables)
+
+Fixes #5"
+
+# Push и создание PR (вручную)
+git push origin feature/issue-5-add-processing-statistics
+# Затем создать Pull Request через GitHub UI или CLI
 ```
 
 ---
@@ -225,9 +264,39 @@ git commit -m "feat: add processing statistics (time, pages, tables)"
 - [ ] Pre-commit проверки проходят
 - [ ] Пробный запуск конвертации успешен
 - [ ] Код закоммичен
+- [ ] Ветка запушена в удаленный репозиторий
+- [ ] Создан Pull Request с веткой main/master
 
 ## Ветка
 `feature/issue-{номер}-{название}`
+
+## Шаги выполнения
+
+1. **Создать и перейти на ветку** (вручную):
+   ```bash
+   git checkout -b feature/issue-{номер}-{название}
+   ```
+
+2. Выполнить задачи из списка выше
+
+3. После завершения работы:
+   ```bash
+   # Тестирование
+   pytest
+   pre-commit run --all-files
+   python -m mgt7_pdf_to_json examples/... -o test_output.json
+   
+   # Коммит
+   git add .
+   git commit -m "{type}: {description}
+   
+   Fixes #{номер}"
+   
+   # Push (вручную)
+   git push origin feature/issue-{номер}-{название}
+   ```
+
+4. **Создать Pull Request** через GitHub UI или CLI (вручную)
 ```
 
 ---
