@@ -484,15 +484,17 @@ class TestValidateInputFile:
         # Create a wrapper that returns mock_stat for our specific path
         def mock_stat_method(self):
             # Compare paths as strings (normalized) to work on all platforms
-            # Use resolve() to normalize paths for comparison
+            # Use absolute paths for reliable comparison across platforms
+            import os
+
             try:
-                self_resolved = str(self.resolve())
-                pdf_resolved = str(pdf_path.resolve())
+                self_abs = os.path.abspath(str(self))
+                pdf_abs = os.path.abspath(str(pdf_path))
             except (OSError, RuntimeError):
-                # If resolve fails, fall back to string comparison
-                self_resolved = str(self)
-                pdf_resolved = str(pdf_path)
-            if self_resolved == pdf_resolved:
+                # If abspath fails, fall back to string comparison
+                self_abs = str(self)
+                pdf_abs = str(pdf_path)
+            if self_abs == pdf_abs:
                 return mock_stat
             return original_stat(self)
 
@@ -533,14 +535,16 @@ class TestValidateInputFile:
             result = original_stat(self)
             # Only raise OSError when accessing st_size (second call in validate_input_file)
             # Compare paths as strings (normalized) to work on all platforms
+            import os
+
             try:
-                self_resolved = str(self.resolve())
-                pdf_resolved = str(pdf_path.resolve())
+                self_abs = os.path.abspath(str(self))
+                pdf_abs = os.path.abspath(str(pdf_path))
             except (OSError, RuntimeError):
-                # If resolve fails, fall back to string comparison
-                self_resolved = str(self)
-                pdf_resolved = str(pdf_path)
-            if self_resolved == pdf_resolved:
+                # If abspath fails, fall back to string comparison
+                self_abs = str(self)
+                pdf_abs = str(pdf_path)
+            if self_abs == pdf_abs:
                 call_count["count"] += 1
                 if call_count["count"] > 1:  # After exists/is_file checks
                     return StatResult(result)
