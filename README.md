@@ -1,5 +1,12 @@
 # mgt7-pdf-to-json
 
+[![CI](https://github.com/KHolodilin/mgt7-pdf-to-json/actions/workflows/ci.yml/badge.svg)](https://github.com/KHolodilin/mgt7-pdf-to-json/actions/workflows/ci.yml)
+[![Test Coverage](https://codecov.io/gh/KHolodilin/mgt7-pdf-to-json/branch/main/graph/badge.svg)](https://codecov.io/gh/KHolodilin/mgt7-pdf-to-json)
+[![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Code style: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Type checking: MyPy](https://img.shields.io/badge/mypy-checked-blue.svg)](http://mypy-lang.org/)
+
 Convert India MCA annual return PDF forms **MGT-7** and **MGT-7A** into structured **JSON**.
 
 A Python CLI tool and library for parsing India Ministry of Corporate Affairs (MCA) annual return forms and converting them to structured JSON format with comprehensive logging and validation.
