@@ -34,6 +34,17 @@ jobs:
       - name: Type check
         run: mypy src/mgt7_pdf_to_json --ignore-missing-imports
 
+      - name: Security check (safety)
+        run: safety check || echo "Safety check completed with warnings/errors"
+
+      - name: Security check (bandit)
+        run: bandit -r src/ -f json -o bandit-report.json || true
+        continue-on-error: true
+
+      - name: Display bandit report
+        if: always()
+        run: bandit -r src/ || echo "Bandit check completed with warnings/errors"
+
   test:
     name: Test (Python ${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
