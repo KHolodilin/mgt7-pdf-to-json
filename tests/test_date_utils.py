@@ -1,6 +1,5 @@
 """Tests for date parsing utilities."""
 
-import pytest
 
 from mgt7_pdf_to_json.date_utils import format_date_for_output, parse_date
 

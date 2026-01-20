@@ -3,10 +3,9 @@
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
-
 from mgt7_pdf_to_json.artifacts import ArtifactManager
 from mgt7_pdf_to_json.config import Config
 from mgt7_pdf_to_json.models import NormalizedDocument, ParsedDocument, RawDocument
@@ -173,7 +172,10 @@ class TestArtifactManager:
         # Mock datetime.now() to return a date far in the future
         # This makes the file appear old relative to the cutoff
         from datetime import datetime, timedelta
-        future_date = datetime.now() + timedelta(days=config_with_artifacts.artifacts.keep_days + 10)
+
+        future_date = datetime.now() + timedelta(
+            days=config_with_artifacts.artifacts.keep_days + 10
+        )
 
         with patch("mgt7_pdf_to_json.artifacts.datetime") as mock_datetime:
             mock_datetime.now.return_value = future_date

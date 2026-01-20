@@ -1,6 +1,5 @@
 """Tests for document parsing components."""
 
-import pytest
 
 from mgt7_pdf_to_json.models import NormalizedDocument
 from mgt7_pdf_to_json.parser import DocumentParser, KeyValueParser, SectionSplitter, TableParser
@@ -95,7 +94,7 @@ class TestKeyValueParser:
         # Create scenario where main pattern gets partial match (< 1000)
         # Need to ensure main pattern matches first with small value
         text = "Turnover: 500"
-        result1 = parser.parse(text)
+        parser.parse(text)  # First parse to set initial value
         # Now add alternative pattern
         text2 = text + "\ni * Turnover\n1,234,567"
         result2 = parser.parse(text2)

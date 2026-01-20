@@ -1,11 +1,8 @@
 """Tests for CLI interface."""
 
-import sys
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from mgt7_pdf_to_json.cli import main, parse_args
 
 
@@ -116,10 +113,11 @@ class TestMain:
         """Test successful main execution."""
         input_file = tmp_path / "test.pdf"
         input_file.write_bytes(b"fake pdf content")
-        output_file = tmp_path / "test.json"
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     result = main()
                     assert result == 0
@@ -130,7 +128,10 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", side_effect=Exception("Config error")):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default",
+                side_effect=Exception("Config error"),
+            ):
                 with patch("sys.stderr"):
                     result = main()
                     assert result == 6  # CONFIG_ERROR
@@ -138,7 +139,9 @@ class TestMain:
     def test_main_input_not_found(self, mock_config):
         """Test main with non-existent input file."""
         with patch("sys.argv", ["mgt7pdf2json", "nonexistent.pdf"]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("sys.stderr"):
                     result = main()
                     assert result == 3  # INPUT_NOT_FOUND
@@ -156,7 +159,9 @@ class TestMain:
         }
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     result = main()
                     assert result == 2  # VALIDATION_FAILED
@@ -173,7 +178,9 @@ class TestMain:
         }
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     result = main()
                     assert result == 4  # UNSUPPORTED_FORMAT
@@ -190,7 +197,9 @@ class TestMain:
         }
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--fail-on-warnings"]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     result = main()
                     assert result == 5  # WARNINGS_AS_ERRORS
@@ -201,8 +210,12 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
-                with patch("mgt7_pdf_to_json.cli.Pipeline", side_effect=FileNotFoundError("File not found")):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch(
+                    "mgt7_pdf_to_json.cli.Pipeline", side_effect=FileNotFoundError("File not found")
+                ):
                     with patch("sys.stderr"):
                         result = main()
                         assert result == 3  # INPUT_NOT_FOUND
@@ -213,8 +226,12 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
-                with patch("mgt7_pdf_to_json.cli.Pipeline", side_effect=ValueError("No extractable text")):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch(
+                    "mgt7_pdf_to_json.cli.Pipeline", side_effect=ValueError("No extractable text")
+                ):
                     with patch("sys.stderr"):
                         result = main()
                         assert result == 4  # UNSUPPORTED_FORMAT
@@ -225,8 +242,12 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
-                with patch("mgt7_pdf_to_json.cli.Pipeline", side_effect=ValueError("Processing failed")):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch(
+                    "mgt7_pdf_to_json.cli.Pipeline", side_effect=ValueError("Processing failed")
+                ):
                     with patch("sys.stderr"):
                         result = main()
                         assert result == 1  # PROCESSING_ERROR
@@ -237,8 +258,12 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
-                with patch("mgt7_pdf_to_json.cli.Pipeline", side_effect=RuntimeError("Unexpected error")):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
+                with patch(
+                    "mgt7_pdf_to_json.cli.Pipeline", side_effect=RuntimeError("Unexpected error")
+                ):
                     with patch("sys.stderr"):
                         result = main()
                         assert result == 1  # PROCESSING_ERROR
@@ -250,7 +275,9 @@ class TestMain:
         output_file = tmp_path / "output.json"
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "-o", str(output_file)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     result = main()
                     assert result == 0
@@ -267,7 +294,9 @@ class TestMain:
         outdir.mkdir()
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--outdir", str(outdir)]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     result = main()
                     assert result == 0
@@ -277,8 +306,13 @@ class TestMain:
         input_file = tmp_path / "test.pdf"
         input_file.write_bytes(b"fake pdf content")
 
-        with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--log-level", "DEBUG", "--mapper", "minimal"]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+        with patch(
+            "sys.argv",
+            ["mgt7pdf2json", str(input_file), "--log-level", "DEBUG", "--mapper", "minimal"],
+        ):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     main()
                     assert mock_config.logging.level == "DEBUG"
@@ -290,7 +324,9 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--debug-artifacts"]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     main()
                     assert mock_config.artifacts.enabled is True
@@ -301,7 +337,9 @@ class TestMain:
         input_file.write_bytes(b"fake pdf content")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--strict"]):
-            with patch("mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config):
+            with patch(
+                "mgt7_pdf_to_json.cli.Config.from_file_or_default", return_value=mock_config
+            ):
                 with patch("mgt7_pdf_to_json.cli.Pipeline", return_value=mock_pipeline):
                     main()
                     assert mock_config.validation.strict is True
