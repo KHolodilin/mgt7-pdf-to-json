@@ -161,29 +161,42 @@ class KeyValueParser:
             ]
 
         for key, pattern in patterns:
-            match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
-            if match:
-                value = match.group(1).strip()
-                # Clean company name
-                if "Company Name" in key:
-                    # Remove extra text after company name
-                    value = re.split(r"\s+(?:Registered|Latitude|Page|\()", value, maxsplit=1)[0]
-                    value = re.sub(r"\s+", " ", value).strip()
-                    # Remove duplicates (sometimes company name is repeated)
-                    words = value.split()
-                    seen = set()
-                    unique_words = []
-                    for word in words:
-                        if word.lower() not in seen or word.upper() == word:  # Keep uppercase words
-                            unique_words.append(word)
-                            seen.add(word.lower())
-                    value = " ".join(unique_words)
-                # Try to convert to number if applicable
-                if "Turnover" in key or "Net Worth" in key:
-                    value = self._parse_value(value)
-                # Don't overwrite existing values unless this is a fallback pattern
-                if key not in result or not result[key]:
-                    result[key] = value
+            try:
+                match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+                if match:
+                    value = match.group(1).strip()
+                    # Clean company name
+                    if "Company Name" in key:
+                        # Remove extra text after company name
+                        value = re.split(r"\s+(?:Registered|Latitude|Page|\()", value, maxsplit=1)[
+                            0
+                        ]
+                        value = re.sub(r"\s+", " ", value).strip()
+                        # Remove duplicates (sometimes company name is repeated)
+                        words = value.split()
+                        seen = set()
+                        unique_words = []
+                        for word in words:
+                            if (
+                                word.lower() not in seen or word.upper() == word
+                            ):  # Keep uppercase words
+                                unique_words.append(word)
+                                seen.add(word.lower())
+                        value = " ".join(unique_words)
+                    # Try to convert to number if applicable
+                    if "Turnover" in key or "Net Worth" in key:
+                        value = self._parse_value(value)
+                    # Don't overwrite existing values unless this is a fallback pattern
+                    if key not in result or not result[key]:
+                        result[key] = value
+            except Exception as e:
+                error_type = type(e).__name__
+                logger.warning(
+                    f"Error parsing field '{key}' from text: {error_type}: {e}. "
+                    f"Pattern used: {pattern[:50]}... "
+                    "This field may be missing or in an unexpected format. "
+                    "Continuing with other fields."
+                )
 
         # Handle CIN fallback - use filename pattern if main pattern failed
         if "CIN" not in result or not result["CIN"]:
@@ -237,9 +250,24 @@ class KeyValueParser:
         # Normalize all date fields
         for key in ["Financial Year From", "Financial Year To", "Financial Year End"]:
             if key in result and result[key]:
-                normalized = parse_date(result[key])
-                if normalized:
-                    result[key] = normalized
+                try:
+                    normalized = parse_date(result[key])
+                    if normalized:
+                        result[key] = normalized
+                    else:
+                        logger.warning(
+                            f"Could not parse date for field '{key}': "
+                            f"'{result[key]}'. "
+                            "Date format may be unexpected. "
+                            "Expected formats: DD/MM/YYYY, DD-MM-YYYY, or similar."
+                        )
+                except Exception as e:
+                    error_type = type(e).__name__
+                    logger.warning(
+                        f"Error parsing date for field '{key}': {error_type}: {e}. "
+                        f"Raw value: '{result[key]}'. "
+                        "Date format may be invalid or unexpected."
+                    )
 
         return result
 
@@ -279,8 +307,12 @@ class KeyValueParser:
             if float_val.is_integer():
                 return int(float_val)
             return float_val
-        except ValueError:
-            pass
+        except ValueError as e:
+            logger.debug(
+                f"Could not parse numeric value '{value}': {e}. "
+                "Returning as string. "
+                "Possible reasons: value contains non-numeric characters or unexpected format."
+            )
 
         # Return as string
         return value
@@ -488,42 +520,76 @@ class DocumentParser:
 
         Returns:
             Parsed document with structured data
+
+        Raises:
+            ParsingError: If critical parsing fails
         """
         logger.debug("Parsing document")
 
-        # Split into sections
-        sections = self.section_splitter.split(doc)
+        try:
+            # Split into sections
+            sections = self.section_splitter.split(doc)
 
-        # Detect form type
-        form_type = self.section_splitter._detect_form_type(doc.text)
+            # Detect form type
+            form_type = self.section_splitter._detect_form_type(doc.text)
 
-        # Parse key-value pairs from full text
-        kv_data = self.key_value_parser.parse(doc.text)
+            # Parse key-value pairs from full text
+            kv_data = self.key_value_parser.parse(doc.text)
 
-        # Parse tables
-        table_data = self.table_parser.parse(raw_tables)
+            # Parse tables
+            table_data = self.table_parser.parse(raw_tables)
 
-        # Build parsed document
-        parsed = ParsedDocument(
-            form_type=form_type,
-            company={
-                "cin": kv_data.get("CIN", ""),
-                "name": kv_data.get("Company Name", ""),
-            },
-            financial_year={
-                "from": kv_data.get("Financial Year From", ""),
-                "to": kv_data.get("Financial Year To", ""),
-            },
-            data={
-                "turnover_and_net_worth": {
-                    "turnover_inr": kv_data.get("Turnover", 0),
-                    "net_worth_inr": kv_data.get("Net Worth", 0),
+            # Validate critical fields and provide helpful error messages
+            missing_fields = []
+            if not kv_data.get("CIN"):
+                missing_fields.append("CIN (Corporate Identity Number)")
+            if not kv_data.get("Company Name"):
+                missing_fields.append("Company Name")
+            if not kv_data.get("Financial Year From") and not kv_data.get("Financial Year To"):
+                missing_fields.append("Financial Year (From/To)")
+
+            if missing_fields:
+                logger.warning(
+                    f"Missing critical fields during parsing: {', '.join(missing_fields)}. "
+                    "These fields may be missing from the PDF or in an unexpected format. "
+                    "Please verify the PDF content."
+                )
+
+            # Build parsed document
+            parsed = ParsedDocument(
+                form_type=form_type,
+                company={
+                    "cin": kv_data.get("CIN", ""),
+                    "name": kv_data.get("Company Name", ""),
                 },
-                **table_data,
-            },
-            metadata={
-                "sections": list(sections.keys()),
-            },
-        )
+                financial_year={
+                    "from": kv_data.get("Financial Year From", ""),
+                    "to": kv_data.get("Financial Year To", ""),
+                },
+                data={
+                    "turnover_and_net_worth": {
+                        "turnover_inr": kv_data.get("Turnover", 0),
+                        "net_worth_inr": kv_data.get("Net Worth", 0),
+                    },
+                    **table_data,
+                },
+                metadata={
+                    "sections": list(sections.keys()),
+                },
+            )
 
-        return parsed
+            return parsed
+        except Exception as e:
+            error_type = type(e).__name__
+            from mgt7_pdf_to_json.exceptions import ParsingError
+
+            error_msg = (
+                f"Failed to parse document: {error_type}: {e}. "
+                "Possible reasons: "
+                "document structure is unexpected, "
+                "required fields are missing or in wrong format, "
+                "or document is corrupted. "
+                f"Document text length: {len(doc.text)} characters."
+            )
+            logger.error(error_msg, exc_info=True)
+            raise ParsingError(error_msg) from e

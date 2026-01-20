@@ -113,7 +113,8 @@ class TestMain:
     def test_main_success(self, mock_config, mock_pipeline, tmp_path):
         """Test successful main execution."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
             with patch(
@@ -126,7 +127,8 @@ class TestMain:
     def test_main_config_error(self, tmp_path):
         """Test main with config loading error."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
             with patch(
@@ -150,7 +152,8 @@ class TestMain:
     def test_main_validation_failed_strict(self, mock_config, mock_pipeline, tmp_path):
         """Test main with validation errors in strict mode."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
         mock_config.validation.strict = True
         mock_pipeline.process.return_value = {
             "meta": {"form_type": "MGT-7"},
@@ -170,7 +173,8 @@ class TestMain:
     def test_main_unsupported_format(self, mock_config, mock_pipeline, tmp_path):
         """Test main with unsupported format."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
         mock_pipeline.process.return_value = {
             "meta": {"form_type": ""},  # Empty form type
             "data": {},
@@ -189,7 +193,8 @@ class TestMain:
     def test_main_fail_on_warnings(self, mock_config, mock_pipeline, tmp_path):
         """Test main with fail-on-warnings flag."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
         mock_pipeline.process.return_value = {
             "meta": {"form_type": "MGT-7"},
             "data": {},
@@ -208,7 +213,8 @@ class TestMain:
     def test_main_file_not_found_exception(self, mock_config, tmp_path):
         """Test main with FileNotFoundError exception."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
             with patch(
@@ -224,7 +230,8 @@ class TestMain:
     def test_main_scanned_pdf_error(self, mock_config, tmp_path):
         """Test main with scanned PDF error."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
             with patch(
@@ -240,7 +247,8 @@ class TestMain:
     def test_main_processing_error(self, mock_config, tmp_path):
         """Test main with processing error."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
             with patch(
@@ -256,7 +264,8 @@ class TestMain:
     def test_main_generic_exception(self, mock_config, tmp_path):
         """Test main with generic exception."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file)]):
             with patch(
@@ -272,7 +281,8 @@ class TestMain:
     def test_main_with_output_path(self, mock_config, mock_pipeline, tmp_path):
         """Test main with explicit output path."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
         output_file = tmp_path / "output.json"
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "-o", str(output_file)]):
@@ -290,7 +300,8 @@ class TestMain:
     def test_main_with_outdir(self, mock_config, mock_pipeline, tmp_path):
         """Test main with output directory."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
         outdir = tmp_path / "output"
         outdir.mkdir()
 
@@ -305,7 +316,8 @@ class TestMain:
     def test_main_cli_args_override_config(self, mock_config, mock_pipeline, tmp_path):
         """Test that CLI args override config."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch(
             "sys.argv",
@@ -322,7 +334,8 @@ class TestMain:
     def test_main_with_debug_artifacts(self, mock_config, mock_pipeline, tmp_path):
         """Test main with debug artifacts flag."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--debug-artifacts"]):
             with patch(
@@ -335,7 +348,8 @@ class TestMain:
     def test_main_with_strict(self, mock_config, mock_pipeline, tmp_path):
         """Test main with strict flag."""
         input_file = tmp_path / "test.pdf"
-        input_file.write_bytes(b"fake pdf content")
+        # Create minimal valid PDF file
+        input_file.write_bytes(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
 
         with patch("sys.argv", ["mgt7pdf2json", str(input_file), "--strict"]):
             with patch(

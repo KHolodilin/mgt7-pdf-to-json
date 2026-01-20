@@ -1,6 +1,9 @@
 """CLI interface for mgt7pdf2json."""
 
+from __future__ import annotations
+
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -89,6 +92,87 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def validate_input_file(input_path: Path) -> tuple[bool, str | None]:
+    """
+    Validate input file before processing.
+
+    Args:
+        input_path: Path to input file
+
+    Returns:
+        Tuple of (is_valid, error_message)
+    """
+    # Check if file exists
+    if not input_path.exists():
+        return False, (
+            f"Input file not found: {input_path}. "
+            "Please check that the file path is correct and the file exists."
+        )
+
+    # Check if it's a file (not a directory)
+    if not input_path.is_file():
+        return False, (
+            f"Input path is not a file: {input_path}. "
+            "Please provide a path to a PDF file, not a directory."
+        )
+
+    # Check file extension (PDF)
+    if input_path.suffix.lower() != ".pdf":
+        return False, (
+            f"Input file does not have PDF extension: {input_path}. "
+            f"File extension: '{input_path.suffix}'. "
+            "Please provide a PDF file (.pdf extension)."
+        )
+
+    # Check file size (not empty, reasonable size)
+    try:
+        file_size = input_path.stat().st_size
+        if file_size == 0:
+            return False, (
+                f"Input file is empty (0 bytes): {input_path}. "
+                "Please provide a valid PDF file with content."
+            )
+        # Warn about very large files (>100MB)
+        if file_size > 100 * 1024 * 1024:  # 100 MB
+            print(
+                f"Warning: Input file is very large ({file_size / (1024 * 1024):.2f} MB): "
+                f"{input_path}. Processing may take a long time.",
+                file=sys.stderr,
+            )
+    except OSError as e:
+        return False, (
+            f"Cannot access file size for {input_path}: {e}. "
+            "Please check file permissions and accessibility."
+        )
+
+    # Check file readability
+    if not os.access(input_path, os.R_OK):
+        return False, (
+            f"Input file is not readable: {input_path}. "
+            "Please check file permissions. The file must be readable."
+        )
+
+    # Check if file is actually a PDF by reading first bytes
+    try:
+        with open(input_path, "rb") as f:
+            header = f.read(4)
+            # PDF files start with %PDF
+            if not header.startswith(b"%PDF"):
+                return False, (
+                    f"Input file does not appear to be a valid PDF: {input_path}. "
+                    f"File header: {header.hex()}. "
+                    "PDF files should start with '%PDF'. "
+                    "The file may be corrupted or not a PDF."
+                )
+    except OSError as e:
+        return False, (
+            f"Cannot read input file: {input_path}. Error: {e}. "
+            "Please check file permissions and that the file is not locked by another process."
+        )
+
+    return True, None
+
+
 def main() -> int:
     """Main CLI entry point."""
     args = parse_args()
@@ -116,8 +200,9 @@ def main() -> int:
 
     # Validate input file
     input_path = Path(args.input)
-    if not input_path.exists():
-        print(f"Input file not found: {input_path}", file=sys.stderr)
+    is_valid, error_message = validate_input_file(input_path)
+    if not is_valid:
+        print(f"Error: {error_message}", file=sys.stderr)
         return 3  # INPUT_NOT_FOUND
 
     # Determine output path
