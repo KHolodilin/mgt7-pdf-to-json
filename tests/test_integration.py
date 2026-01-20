@@ -3,6 +3,7 @@
 import json
 
 import pytest
+
 from mgt7_pdf_to_json import Config, Pipeline
 
 

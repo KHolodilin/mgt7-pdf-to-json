@@ -1,6 +1,7 @@
 """Tests for PDF extractor."""
 
 import pytest
+
 from mgt7_pdf_to_json.extractor import PdfPlumberExtractor
 
 

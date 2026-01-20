@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+
 from mgt7_pdf_to_json.artifacts import ArtifactManager
 from mgt7_pdf_to_json.config import Config
 from mgt7_pdf_to_json.models import NormalizedDocument, ParsedDocument, RawDocument

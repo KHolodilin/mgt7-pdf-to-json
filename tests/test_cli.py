@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from mgt7_pdf_to_json.cli import main, parse_args
 
 
