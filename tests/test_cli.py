@@ -1,11 +1,10 @@
 """Tests for CLI interface."""
 
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mgt7_pdf_to_json.cli import main, parse_args, validate_input_file, validate_input_file
+from mgt7_pdf_to_json.cli import main, parse_args, validate_input_file
 
 
 class TestParseArgs:
