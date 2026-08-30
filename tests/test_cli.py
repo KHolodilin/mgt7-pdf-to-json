@@ -513,11 +513,12 @@ class TestValidateInputFile:
         pdf_content = b"%PDF-1.4\n%%\xe2\xe3\xe4\xe5\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Count 0>>endobj\nxref\n0 3\n0000000000 65535 f\n0000000009 00000 n\n0000000054 00000 n\ntrailer<</Size 3/Root 1 0 R>>startxref\n106\n%%EOF"
         pdf_path.write_bytes(pdf_content)
 
-        # Mock stat() to raise OSError only when accessing st_size, not for exists/is_file
+        # Mock stat() to raise OSError only when accessing st_size, not for exists/is_file.
+        # Always wrap the target path: on Python 3.14 exists()/is_file() no longer call
+        # Path.stat(), so a "second call" counter would skip the size check.
         from pathlib import Path
 
         original_stat = Path.stat
-        call_count = {"count": 0}
 
         class StatResult:
             """Mock stat result that raises OSError when accessing st_size."""
@@ -530,22 +531,16 @@ class TestValidateInputFile:
             def st_size(self):
                 raise OSError("Permission denied")
 
-        # Store the target path as a string for reliable comparison
         target_path_str = str(pdf_path.absolute())
 
         def mock_stat_method(self, *args, **kwargs):
             result = original_stat(self, *args, **kwargs)
-            # Only raise OSError when accessing st_size (second call in validate_input_file)
-            # Compare paths as absolute strings to work on all platforms
             try:
                 self_abs = str(self.absolute())
             except (OSError, RuntimeError):
-                # If absolute() fails, fall back to string comparison
                 self_abs = str(self)
             if self_abs == target_path_str:
-                call_count["count"] += 1
-                if call_count["count"] > 1:  # After exists/is_file checks
-                    return StatResult(result)
+                return StatResult(result)
             return result
 
         monkeypatch.setattr(Path, "stat", mock_stat_method)

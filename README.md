@@ -231,11 +231,7 @@ config = Config.default()
 pipeline = Pipeline(config)
 
 # Enable statistics collection
-result = pipeline.process(
-    "input.pdf",
-    output_path="output.json",
-    include_stats=True
-)
+result = pipeline.process("input.pdf", output_path="output.json", include_stats=True)
 
 # Access statistics
 if "statistics" in result.get("meta", {}):

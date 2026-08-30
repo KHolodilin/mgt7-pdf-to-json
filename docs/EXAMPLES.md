@@ -138,7 +138,9 @@ print(f"Net Worth: {financial.get('net_worth_inr', 0)}")
 # Access meetings
 meetings = result["data"].get("meetings", {}).get("board_meetings", [])
 for meeting in meetings:
-    print(f"Meeting on {meeting['date']}: {meeting['directors_attended']}/{meeting['directors_total']} directors")
+    print(
+        f"Meeting on {meeting['date']}: {meeting['directors_attended']}/{meeting['directors_total']} directors"
+    )
 
 # Check for warnings/errors
 if result["warnings"]:
@@ -322,19 +324,17 @@ for pdf_file in tqdm(pdf_files, desc="Processing PDFs"):
     output_file = pdf_file.with_suffix(".json")
     try:
         result = pipeline.process(str(pdf_file), str(output_file))
-        results.append({
-            "file": pdf_file.name,
-            "status": "success",
-            "request_id": result["meta"]["request_id"],
-            "warnings": len(result["warnings"]),
-            "errors": len(result["errors"])
-        })
+        results.append(
+            {
+                "file": pdf_file.name,
+                "status": "success",
+                "request_id": result["meta"]["request_id"],
+                "warnings": len(result["warnings"]),
+                "errors": len(result["errors"]),
+            }
+        )
     except Exception as e:
-        results.append({
-            "file": pdf_file.name,
-            "status": "error",
-            "error": str(e)
-        })
+        results.append({"file": pdf_file.name, "status": "error", "error": str(e)})
 
 # Summary
 successful = sum(1 for r in results if r["status"] == "success")
